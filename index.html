@@ -1,0 +1,119 @@
+<!DOCTYPE html>
+<html>
+	<head>
+		<meta charset="utf-8" />
+		<title>Art Randomizer | Harvard Art Museums</title>
+		<style type="text/css">
+			body {background: #ffffff;color: #000000;font-family: verdana;font-size: 0.8em;margin: 0px;padding: 0px;}
+			header {background: #e7e7e7; padding: 10px;}
+			#data {margin: 0px 0px 10px 0px;padding: 0px;height: 100%;width: 100%;}
+			footer {background: #999999; padding: 10px;}
+			.info-panel {}
+
+			.swipe {
+			  overflow: hidden;
+			  visibility: hidden;
+			  position: relative;
+			}
+			.swipe-wrap {
+			  text-align: center;
+			  overflow: hidden;
+			  position: relative;
+			}
+			.swipe-wrap > div {
+			  float:left;
+			  width:100%;
+			  position: relative;
+			  margin-top: 10px;
+			  margin-bottom: 10px;
+			}
+		</style>
+		<script type="text/javascript">
+		  var _gaq = _gaq || [];
+		  _gaq.push(['_setAccount', 'UA-5623685-1']);
+		  _gaq.push(['_setDomainName', 'harvardartmuseums.org']);
+		  _gaq.push(['_setAllowLinker', true]);
+		  _gaq.push(['_trackPageview']);
+
+		  (function() {
+		    var ga = document.createElement('script'); ga.type = 'text/javascript'; ga.async = true;
+		    ga.src = ('https:' == document.location.protocol ? 'https://ssl' : 'http://www') + '.google-analytics.com/ga.js';
+		    var s = document.getElementsByTagName('script')[0]; s.parentNode.insertBefore(ga, s);
+		  })();
+		</script>		
+	</head>
+	<body>
+		<!--http://webcache.googleusercontent.com/search?q=cache:KXS16-PM1lQJ:blog.lynda.com/2012/12/27/introduction-to-javascript-templating-using-mustache-js/+&cd=6&hl=en&ct=clnk&gl=us
+
+		https://github.com/janl/mustache.js-->
+		<header>
+			<h1>Art Randomizer</h1>
+		</header>
+
+		<div class="grouping highlight-all-time">
+			<div id="random-set"></div>
+		</div>
+
+		<footer>
+			<div class="info-panel"></div>
+		</footer>
+
+		<script src="http://cdnjs.cloudflare.com/ajax/libs/mustache.js/0.7.0/mustache.min.js"></script>
+		<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
+		<script src="swipe.js"></script>
+		<script src="//js.leapmotion.com/0.2.0/leap.min.js"></script>
+		<script id="random-set-template" type="text/template">
+			<div id="data">				
+				<div id="slider" class="swipe">
+					<div class="swipe-wrap">
+						{{#hits}}
+							<div data-object-id="{{_source.objectid}}">
+								<div><img src="{{_source.primaryimageurl}}"></div>
+								<div><a href="http://harvardartmuseums.org/art/{{_source.objectid}}">{{_source.title}}</a></div>
+							</div>
+						{{/hits}}
+					</div>
+				</div>
+			</div>
+		</script>	
+		<script id="stats-info-template" type="text/template">	
+			{{#statsdates}} {{start}} to {{end}} {{/statsdates}}
+		</script>
+		<script>
+			$(function() {fillTopFive();});
+
+			function fillTopFive() {
+				$.getJSON('http://api.harvardartmuseums.org/collection/object/random?size=100&q=imagecount:>0', function(data) {
+					var template = $('#random-set-template').html();
+					var info = Mustache.to_html(template, data.hits);
+
+					$('#random-set').html(info);
+					window.mySwipe = Swipe(document.getElementById('slider'));
+				});
+			}
+
+			Leap.loop({enableGestures: true}, function(frame) {
+				if (frame.gestures.length > 0) {		
+					switch (frame.gestures[0].type)	{
+						case 'keyTap':
+							mySwipe.next();	
+							break;
+						case 'screenTap':
+							console.log("tap");
+							break;
+						case 'swipe':
+							if (frame.gestures[0].state === 'stop') {
+								console.log(frame.gestures[0].direction[0]);				
+							}
+							break;
+					}		
+				}
+			});
+			
+		</script>
+	</body>
+</html>
+
+
+
+  
