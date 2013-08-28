@@ -7,6 +7,7 @@
 			body {background: #ffffff;color: #000000;font-family: verdana;font-size: 0.8em;margin: 0px;padding: 0px;}
 			header {background: #e7e7e7; padding: 10px;}
 			#data {margin: 0px 0px 10px 0px;padding: 0px;height: 100%;width: 100%;}
+			#loader {text-align: center;width: 100%;}
 			footer {background: #999999; padding: 10px;}
 			.info-panel {}
 
@@ -52,6 +53,10 @@
 
 		<div class="grouping highlight-all-time">
 			<div id="random-set"></div>
+			<div id="loader">
+				<div>Fetching some beautiful art just for you...</div>
+				<img src="ajax-loader.gif">
+			</div>
 		</div>
 
 		<footer>
@@ -96,6 +101,7 @@
 					var template = $('#random-set-template').html();
 					var info = Mustache.to_html(template, data.hits);
 
+					$('#loader').hide();
 					$('#random-set').html(info);
 					window.mySwipe = Swipe(document.getElementById('slider'));
 				});
