@@ -81,7 +81,7 @@
 		</script>
 		<script>
 			$(function() {
-				fillTopFive();
+				getRandomObjects();
 
 				$(window).on('keydown', function (e) {
     				if (e.keyCode === 37) // left
@@ -91,7 +91,7 @@
 				});
 			});
 
-			function fillTopFive() {
+			function getRandomObjects() {
 				$.getJSON('http://api.harvardartmuseums.org/collection/object/random?size=100&q=imagecount:>0', function(data) {
 					var template = $('#random-set-template').html();
 					var info = Mustache.to_html(template, data.hits);
