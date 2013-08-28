@@ -80,7 +80,16 @@
 			{{#statsdates}} {{start}} to {{end}} {{/statsdates}}
 		</script>
 		<script>
-			$(function() {fillTopFive();});
+			$(function() {
+				fillTopFive();
+
+				$(window).on('keydown', function (e) {
+    				if (e.keyCode === 37) // left
+        				mySwipe.prev();
+    				else if (e.keyCode === 39) // right
+						mySwipe.next();
+				});
+			});
 
 			function fillTopFive() {
 				$.getJSON('http://api.harvardartmuseums.org/collection/object/random?size=100&q=imagecount:>0', function(data) {
