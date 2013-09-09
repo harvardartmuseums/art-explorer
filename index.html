@@ -71,12 +71,12 @@
 			<div id="data">				
 				<div id="slider" class="swipe">
 					<div class="swipe-wrap">
-						{{#hits}}
-							<div data-object-id="{{_source.objectid}}">
-								<div><img src="{{_source.primaryimageurl}}"></div>
-								<div><a href="http://harvardartmuseums.org/art/{{_source.objectid}}">{{_source.title}}</a></div>
+						{{#records}}
+							<div data-object-id="{{objectid}}">
+								<div><img src="{{primaryimageurl}}"></div>
+								<div><a href="http://harvardartmuseums.org/art/{{objectid}}">{{title}}</a></div>
 							</div>
-						{{/hits}}
+						{{/records}}
 					</div>
 				</div>
 			</div>
@@ -99,7 +99,7 @@
 			function getRandomObjects() {
 				$.getJSON('http://api.harvardartmuseums.org/collection/object/random?size=100&q=imagecount:>0', function(data) {
 					var template = $('#random-set-template').html();
-					var info = Mustache.to_html(template, data.hits);
+					var info = Mustache.to_html(template, data);
 
 					$('#loader').hide();
 					$('#random-set').html(info);
