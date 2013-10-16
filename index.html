@@ -11,6 +11,10 @@
 			footer {background: #999999; padding: 10px;}
 			.info-panel {}
 
+			.object-panel {float:right;width:250px;text-align:left;top:0px;position:fixed;right:0px;height: 100%;background: #ffffff;opacity: 0.95;padding-left: 10px;}
+			.object-panel .object-color-swatch {float:left;width:10px;height:10px;}		
+			.object-panel .object-image {float:left; padding:2px;height:50px;}
+
 			.swipe {
 			  overflow: hidden;
 			  visibility: hidden;
@@ -44,9 +48,6 @@
 		</script>		
 	</head>
 	<body>
-		<!--http://webcache.googleusercontent.com/search?q=cache:KXS16-PM1lQJ:blog.lynda.com/2012/12/27/introduction-to-javascript-templating-using-mustache-js/+&cd=6&hl=en&ct=clnk&gl=us
-
-		https://github.com/janl/mustache.js-->
 		<header>
 			<h1>Art Randomizer</h1>
 		</header>
@@ -63,7 +64,8 @@
 			<div class="info-panel"></div>
 		</footer>
 
-		<script src="http://cdnjs.cloudflare.com/ajax/libs/mustache.js/0.7.0/mustache.min.js"></script>
+		<!--http://handlebarsjs.com/-->
+		<script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/1.0.rc.2/handlebars.min.js"></script>
 		<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
 		<script src="swipe.js"></script>
 		<script src="//js.leapmotion.com/0.2.0/leap.min.js"></script>
@@ -73,8 +75,47 @@
 					<div class="swipe-wrap">
 						{{#records}}
 							<div data-object-id="{{objectid}}">
-								<div><img src="{{primaryimageurl}}"></div>
-								<div><a href="http://harvardartmuseums.org/art/{{objectid}}">{{title}}</a></div>
+								<div><img id="object-{{objectid}}" src="{{primaryimageurl}}"></div>
+								<div class="object-panel">						
+									<p><a href="{{url}}">{{title}}</a></p>
+									<p>{{dated}}</p>
+									<p>{{classification}}</p>
+									<p>{{medium}}</p>
+									<!-- <p>{{technique}}</p>	-->
+									{{#if creationplace}}
+									<p>Created in {{creationplace}}</p>
+									<p>
+										<img src="https://maps.googleapis.com/maps/api/staticmap?center={{creationplace}}&zoom=2&size=250x100&markers=color:blue|{{creationplace}}&maptype=roadmap&sensor=false">
+									</p>
+									{{/if}}
+									<p>Dimensions: {{dimensions}}</p>
+									<p>
+										{{#colors}}
+											<div class="object-color-swatch" style="background:{{color}};" title="{{color}}, {{hue}}, {{percent}}"></div>
+										{{/colors}}
+										<div style="clear:both"></div>
+									</p>
+									<p>
+										{{#images}}
+											<div class="object-image"><a href="#" onclick="swapImage({{../objectid}},'{{baseimageurl}}')"><img src="{{baseimageurl}}?width=50&height=50"></a></div>
+										{{/images}}
+										<div style="clear:both"></div>
+									</p>
+									<p>
+										{{#people}}
+											{{role}}: {{prefix}} {{displayname}}<br/>
+										{{/people}}
+									</p>
+									{{#if description}}
+										<p>Description: {{description}}</p>
+									{{/if}}
+									{{#if commentary}}
+										<p>Commentary: {{commentary}}</p>
+									{{/if}}
+									{{#if provenance}}
+										<p>Provenance: {{provenance}}</p>
+									{{/if}}
+								</div>
 							</div>
 						{{/records}}
 					</div>
@@ -97,14 +138,19 @@
 			});
 
 			function getRandomObjects() {
-				$.getJSON('http://api.harvardartmuseums.org/collection/object/random?size=100&q=imagecount:>0', function(data) {
-					var template = $('#random-set-template').html();
-					var info = Mustache.to_html(template, data);
+				$.getJSON('http://api.harvardartmuseums.org/collection/object/random?size=100&i=1&q=classification:paintings', function(data) {
+					var source = $('#random-set-template').html();
+					var template = Handlebars.compile(source);
+					var info = template(data);
 
 					$('#loader').hide();
 					$('#random-set').html(info);
 					window.mySwipe = Swipe(document.getElementById('slider'));
 				});
+			}
+
+			function swapImage(id, url) {
+				$("#object-"+id).attr('src', url);
 			}
 
 			Leap.loop({enableGestures: true}, function(frame) {
