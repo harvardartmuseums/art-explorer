@@ -128,10 +128,18 @@
 				getRandomObjects();
 
 				$(window).on('keydown', function (e) {
-    				if (e.keyCode === 37) // left
-        				mySwipe.prev();
-    				else if (e.keyCode === 39) // right
-						mySwipe.next();
+    				switch (e.keyCode) {
+    					case 37: // left
+        					mySwipe.prev();
+        					break;
+        				case 39: // right
+							mySwipe.next();
+							break;
+						case 73: // i
+							$(".object-panel").toggle();
+							break;
+						default:
+					}
 				});
 			});
 
