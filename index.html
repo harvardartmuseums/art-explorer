@@ -6,32 +6,25 @@
 		<style type="text/css">
 			body {background: #ffffff;color: #000000;font-family: verdana;font-size: 0.8em;margin: 0px;padding: 0px;}
 			header {background: #e7e7e7; padding: 10px;}
+
+			#content {margin-bottom: 20px;}
 			#data {margin: 0px 0px 10px 0px;padding: 0px;height: 100%;width: 100%;}
-			#loader {text-align: center;width: 100%;}
-			footer {background: #999999; padding: 10px;}
-			.info-panel {}
+			#loader {margin:20px;text-align: center;width: 100%;}
+			#loader .message {font-size: 1.4em;}
 
 			.object-panel {float:right;width:250px;text-align:left;top:0px;position:fixed;right:0px;height: 100%;background: #ffffff;opacity: 0.95;padding-left: 10px;}
 			.object-panel .object-color-swatch {float:left;width:10px;height:10px;}		
 			.object-panel .object-image {float:left; padding:2px;height:50px;}
 
-			.swipe {
-			  overflow: hidden;
-			  visibility: hidden;
-			  position: relative;
-			}
-			.swipe-wrap {
-			  text-align: center;
-			  overflow: hidden;
-			  position: relative;
-			}
-			.swipe-wrap > div {
-			  float:left;
-			  width:100%;
-			  position: relative;
-			  margin-top: 10px;
-			  margin-bottom: 10px;
-			}
+			footer {background: #999999; padding: 10px;color: #333333;bottom:0;height:16px;}
+			footer .info-panel {}
+			#help-button {cursor: pointer;}
+			#help-message {display: none;}
+			#counter {float: right;}
+
+			.swipe {overflow: hidden;visibility: hidden;position: relative;}
+			.swipe-wrap {text-align: center;overflow: hidden;position: relative;}
+			.swipe-wrap > div {float:left;width:100%;position: relative;margin-top: 10px;margin-bottom: 10px;}
 		</style>
 		<script type="text/javascript">
 		  var _gaq = _gaq || [];
@@ -52,16 +45,19 @@
 			<h1>Art Randomizer</h1>
 		</header>
 
-		<div class="grouping highlight-all-time">
+		<div id="content">
 			<div id="random-set"></div>
 			<div id="loader">
-				<div>Fetching some beautiful art just for you...</div>
+				<p class="message">Fetching some beautiful art just for you...</p>
 				<img src="ajax-loader.gif">
 			</div>
 		</div>
 
 		<footer>
-			<div class="info-panel"></div>
+			<div class="info-panel">
+				<span id="help-button" onclick="$('#help-message').toggle()">Help</span><span id="help-message"> &mdash; Navigate by using the left and right arrows on a keyboard, by swiping left or right on a touch screen, or by using a tapping gesture with a Leap Motion.</span>
+				<span id="counter"></span>
+			</div>
 		</footer>
 
 		<!--http://handlebarsjs.com/-->
@@ -81,6 +77,11 @@
 									<p>{{dated}}</p>
 									<p>{{classification}}</p>
 									<p>{{medium}}</p>
+									<p>
+										{{#people}}
+											{{role}}: {{prefix}} {{displayname}}<br/>
+										{{/people}}
+									</p>
 									<!-- <p>{{technique}}</p>	-->
 									{{#if creationplace}}
 									<p>Created in {{creationplace}}</p>
@@ -101,11 +102,8 @@
 										{{/images}}
 										<div style="clear:both"></div>
 									</p>
-									<p>
-										{{#people}}
-											{{role}}: {{prefix}} {{displayname}}<br/>
-										{{/people}}
-									</p>
+									<p>Creditline: {{creditline}}</p>
+									<p>Object number: {{objectnumber}}</p>
 									{{#if description}}
 										<p>Description: {{description}}</p>
 									{{/if}}
@@ -138,15 +136,20 @@
 			});
 
 			function getRandomObjects() {
-				$.getJSON('http://api.harvardartmuseums.org/collection/object/random?size=100&i=1&q=classification:paintings', function(data) {
+				$.getJSON('http://api.harvardartmuseums.org/collection/object/random?size=50&i=1&q=classification:paintings', function(data) {
 					var source = $('#random-set-template').html();
 					var template = Handlebars.compile(source);
 					var info = template(data);
 
 					$('#loader').hide();
 					$('#random-set').html(info);
-					window.mySwipe = Swipe(document.getElementById('slider'));
+					window.mySwipe = Swipe(document.getElementById('slider'), {callback: updateNavigator});
+					updateNavigator(0,null);
 				});
+			}
+
+			function updateNavigator(i,e) {
+				$("#counter").html(i+1 + ' of ' + mySwipe.getNumSlides());
 			}
 
 			function swapImage(id, url) {
