@@ -55,7 +55,7 @@
 
 		<footer>
 			<div class="info-panel">
-				<span id="help-button" onclick="$('#help-message').toggle()">Help</span><span id="help-message"> &mdash; Navigate by using the left and right arrows on a keyboard, by swiping left or right on a touch screen, or by using a tapping gesture with a Leap Motion.</span>
+				<span id="help-button">Help</span><span id="help-message"> &mdash; Navigate by using the left and right arrows on a keyboard, by swiping left or right on a touch screen, or by using a tapping gesture with a Leap Motion.</span>
 				<span id="counter"></span>
 			</div>
 		</footer>
@@ -125,6 +125,10 @@
 		</script>
 		<script>
 			$(function() {
+				$("#help-button").on("click", function() {
+					$('#help-message').toggle();
+				});
+
 				getRandomObjects();
 
 				$(window).on('keydown', function (e) {
