@@ -7,24 +7,25 @@
 			body {background: #ffffff;color: #000000;font-family: verdana;font-size: 0.8em;margin: 0px;padding: 0px;}
 			header {background: #e7e7e7; padding: 10px;}
 
-			#content {margin-bottom: 20px;}
-			#data {margin: 0px 0px 10px 0px;padding: 0px;height: 100%;width: 100%;}
-			#loader {margin:20px;text-align: center;width: 100%;}
+			#content {overflow: hidden;}
+			#data {margin: 0px 0px 0px 0px;padding: 0px;width: 100%;}
+			#loader {text-align: center;width: 100%;display: none;padding-top: 10px;}
 			#loader .message {font-size: 1.4em;}
 
-			.object-panel {float:right;width:250px;text-align:left;top:0px;position:fixed;right:0px;height: 100%;background: #ffffff;opacity: 0.95;padding-left: 10px;}
+			.object-panel {float:right;width:250px;text-align:left;top:0px;position:fixed;right:0px;height: 100%;background: #ffffff;opacity: 0.95;padding-left: 10px;padding-right: 10px;}
 			.object-panel .object-color-swatch {float:left;width:10px;height:10px;}		
 			.object-panel .object-image {float:left; padding:2px;height:50px;}
 
 			footer {background: #999999; padding: 10px;color: #333333;bottom:0;height:16px;}
 			footer .info-panel {}
-			#help-button {cursor: pointer;}
-			#help-message {display: none;}
+			#help-button, #sets-button, #info-button {cursor: pointer;}
+			#sets-paintings-button, #sets-photographs-button, #sets-prints-button, #sets-drawings-button, #sets-coins-button {cursor: pointer;}
+			#help-message, #sets-message {display: none;}
 			#counter {float: right;}
 
 			.swipe {overflow: hidden;visibility: hidden;position: relative;}
 			.swipe-wrap {text-align: center;overflow: hidden;position: relative;}
-			.swipe-wrap > div {float:left;width:100%;position: relative;margin-top: 10px;margin-bottom: 10px;}
+			.swipe-wrap > div {float:left;position: relative;}
 		</style>
 		<script type="text/javascript">
 		  var _gaq = _gaq || [];
@@ -46,17 +47,19 @@
 		</header>
 
 		<div id="content">
-			<div id="random-set"></div>
 			<div id="loader">
 				<p class="message">Fetching some beautiful art just for you...</p>
 				<img src="ajax-loader.gif">
 			</div>
+			<div id="random-set"></div>
 		</div>
 
 		<footer>
 			<div class="info-panel">
+				<span id="info-button">Info</span>&nbsp;|
+				<span id="sets-button">Sets</span><span id="sets-message"> &mdash; <span id="sets-coins-button">coins</span>, <span id="sets-paintings-button">paintings</span>, <span id="sets-prints-button">prints</span>, <span id="sets-drawings-button">drawings</span>, <span id="sets-photographs-button">photographs</span></span>&nbsp;|
 				<span id="help-button">Help</span><span id="help-message"> &mdash; Navigate by using the left and right arrows on a keyboard, by swiping left or right on a touch screen, or by using a tapping gesture with a Leap Motion.</span>
-				<span id="counter"></span>
+				<span id="counter"></span>				
 			</div>
 		</footer>
 
@@ -71,7 +74,7 @@
 					<div class="swipe-wrap">
 						{{#records}}
 							<div data-object-id="{{objectid}}">
-								<div><img id="object-{{objectid}}" src="{{primaryimageurl}}"></div>
+								<div><img id="object-{{objectid}}" src="{{imageURL primaryimageurl}}"></div>
 								<div class="object-panel">						
 									<p><a href="{{url}}">{{title}}</a></p>
 									<p>{{dated}}</p>
@@ -98,7 +101,7 @@
 									</p>
 									<p>
 										{{#images}}
-											<div class="object-image"><a href="#" onclick="swapImage({{../objectid}},'{{baseimageurl}}')"><img src="{{baseimageurl}}?width=50&height=50"></a></div>
+											<div class="object-image"><a href="#" onclick="swapImage({{../objectid}},'{{imageURL baseimageurl}}')"><img src="{{baseimageurl}}?width=50&height=50"></a></div>
 										{{/images}}
 										<div style="clear:both"></div>
 									</p>
@@ -125,8 +128,46 @@
 		</script>
 		<script>
 			$(function() {
+				$("#content").height($(window).height() - $("header").innerHeight() - $("footer").innerHeight());
+
+				$("#info-button").on("click", function() {
+					toggleObjectInfoPanel();
+				});
+
 				$("#help-button").on("click", function() {
 					$('#help-message').toggle();
+				});
+
+				$("#sets-button").on("click", function() {
+					$('#sets-message').toggle();
+				});
+
+				$("#sets-coins-button").on("click", function() {
+					getRandomObjects("coins");
+				});
+
+				$("#sets-photographs-button").on("click", function() {
+					getRandomObjects("photographs");
+				});
+
+				$("#sets-paintings-button").on("click", function() {
+					getRandomObjects("paintings");
+				});
+
+				$("#sets-prints-button").on("click", function() {
+					getRandomObjects("prints");
+				});
+
+				$("#sets-drawings-button").on("click", function() {
+					getRandomObjects("drawings");
+				});
+
+				var imageWidth = $("#content").innerWidth();
+				var imageHeight = $("#content").innerHeight();
+				var imageURLParams = '?width=' + imageWidth + '&height=' + imageHeight;
+
+				Handlebars.registerHelper('imageURL', function(image) {
+					return image + imageURLParams;
 				});
 
 				getRandomObjects();
@@ -140,24 +181,35 @@
 							mySwipe.next();
 							break;
 						case 73: // i
-							$(".object-panel").toggle();
+							toggleObjectInfoPanel();
 							break;
 						default:
 					}
 				});
 			});
 
-			function getRandomObjects() {
-				$.getJSON('http://api.harvardartmuseums.org/collection/object/random?size=50&i=1&q=classification:paintings', function(data) {
+			function getRandomObjects(setName) {
+				set = setName || 'paintings';
+
+				$('#random-set').hide();
+				$('#loader').show();
+
+				$.getJSON('http://api.harvardartmuseums.org/collection/object/random?size=25&i=1&q=classification:' + set, function(data) {
 					var source = $('#random-set-template').html();
 					var template = Handlebars.compile(source);
 					var info = template(data);
 
-					$('#loader').hide();
+
 					$('#random-set').html(info);
+					$('#loader').hide();
+					$('#random-set').show();
 					window.mySwipe = Swipe(document.getElementById('slider'), {callback: updateNavigator});
 					updateNavigator(0,null);
 				});
+			}
+
+			function toggleObjectInfoPanel() {
+				$(".object-panel").toggle();
 			}
 
 			function updateNavigator(i,e) {
@@ -175,11 +227,10 @@
 							mySwipe.next();	
 							break;
 						case 'screenTap':
-							console.log("tap");
 							break;
 						case 'swipe':
 							if (frame.gestures[0].state === 'stop') {
-								console.log(frame.gestures[0].direction[0]);				
+								// console.log(frame.gestures[0].direction[0]);				
 							}
 							break;
 					}		
