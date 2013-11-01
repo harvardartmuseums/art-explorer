@@ -9,19 +9,26 @@
 
 			#content {overflow: hidden;}
 			#data {margin: 0px 0px 0px 0px;padding: 0px;width: 100%;}
-			#loader {text-align: center;width: 100%;display: none;padding-top: 10px;}
+			#loader {text-align: center;width: 100%;display: none;z-index: 100000;background: white;}
 			#loader .message {font-size: 1.4em;}
+
+			#object-grid {position:fixed;z-index:9999;height: 100%;background: #ffffff;opacity: 0.95;bottom: 36px;}
+			#object-grid img {float: left;margin: 5px;}
 
 			.object-panel {float:right;width:250px;text-align:left;top:0px;position:fixed;right:0px;height: 100%;background: #ffffff;opacity: 0.95;padding-left: 10px;padding-right: 10px;}
 			.object-panel .object-color-swatch {float:left;width:10px;height:10px;}		
 			.object-panel .object-image {float:left; padding:2px;height:50px;}
 
-			footer {background: #999999; padding: 10px;color: #333333;bottom:0;height:16px;}
+			footer {background: #999999; padding: 10px;color: #333333;bottom:0;height:16px;z-index: 50000;}
 			footer .info-panel {}
-			#help-button, #sets-button, #info-button {cursor: pointer;}
-			#sets-paintings-button, #sets-photographs-button, #sets-prints-button, #sets-drawings-button, #sets-coins-button {cursor: pointer;}
-			#help-message, #sets-message {display: none;}
-			#counter {float: right;}
+			footer #help-button, #sets-button, #info-button, #grid-button {cursor: pointer;}
+			footer .interest-button {cursor: pointer;}
+			footer .color-swatch {float:left;width:10px;height:10px;}	
+			footer #help-message, #sets-message {display: none;}
+			footer #grid-button {float:right;vertical-align:middle;margin-left:10px;}
+			footer #grid-button.grid-on {opacity:1.0;}
+			footer #grid-button.grid-off {opacity:0.6;}
+			footer #counter {float: right;}
 
 			.swipe {overflow: hidden;visibility: hidden;position: relative;}
 			.swipe-wrap {text-align: center;overflow: hidden;position: relative;}
@@ -51,23 +58,52 @@
 				<p class="message">Fetching some beautiful art just for you...</p>
 				<img src="ajax-loader.gif">
 			</div>
+			<div id="object-grid"></div>
 			<div id="random-set"></div>
 		</div>
 
 		<footer>
 			<div class="info-panel">
-				<span id="info-button">Info</span>&nbsp;|
-				<span id="sets-button">Sets</span><span id="sets-message"> &mdash; <span id="sets-coins-button">coins</span>, <span id="sets-paintings-button">paintings</span>, <span id="sets-prints-button">prints</span>, <span id="sets-drawings-button">drawings</span>, <span id="sets-photographs-button">photographs</span></span>&nbsp;|
-				<span id="help-button">Help</span><span id="help-message"> &mdash; Navigate by using the left and right arrows on a keyboard, by swiping left or right on a touch screen, or by using a tapping gesture with a Leap Motion.</span>
-				<span id="counter"></span>				
+				<span id="info-button">Info</span>&nbsp;&nbsp;|&nbsp;
+				<span id="sets-button">Interests</span>
+					<span id="sets-message"> &mdash;
+						<span class="interest-button" data-field="classification" data-value="*">everything</span>&nbsp;or
+						<span class="interest-button" data-field="classification" data-value="coins">coins</span>, 
+						<span class="interest-button" data-field="classification" data-value="paintings">paintings</span>, 
+						<span class="interest-button" data-field="classification" data-value="prints">prints</span>, 
+						<span class="interest-button" data-field="classification" data-value="drawings">drawings</span>, 
+						<span class="interest-button" data-field="classification" data-value="photographs">photographs</span>, 
+						<span class="interest-button" data-field="classification" data-value="sculpture">sculpture</span>, 
+						<span class="interest-button" data-field="classification" data-value="textile">textiles</span>&nbsp;or&nbsp;
+						<span class="interest-button" data-field="hue" data-value="red" style="background:red">&nbsp;&nbsp;&nbsp;</span>
+						<span class="interest-button" data-field="hue" data-value="orange" style="background:orange">&nbsp;&nbsp;&nbsp;</span>
+						<span class="interest-button" data-field="hue" data-value="yellow" style="background:yellow">&nbsp;&nbsp;&nbsp;</span>
+						<span class="interest-button" data-field="hue" data-value="green" style="background:green">&nbsp;&nbsp;&nbsp;</span>
+						<span class="interest-button" data-field="hue" data-value="blue" style="background:blue">&nbsp;&nbsp;&nbsp;</span>
+						<span class="interest-button" data-field="hue" data-value="violet" style="background:violet">&nbsp;&nbsp;&nbsp;</span>
+						<span class="interest-button" data-field="hue" data-value="brown" style="background:brown">&nbsp;&nbsp;&nbsp;</span>
+						<span class="interest-button" data-field="hue" data-value="white" style="background:white">&nbsp;&nbsp;&nbsp;</span>
+						<span class="interest-button" data-field="hue" data-value="gray" style="background:gray">&nbsp;&nbsp;&nbsp;</span>
+						<span class="interest-button" data-field="hue" data-value="black" style="background:black">&nbsp;&nbsp;&nbsp;</span>
+					</span>&nbsp;&nbsp;|&nbsp;
+				<span id="help-button">Help</span>
+					<span id="help-message"> &mdash; Navigate by using the left and right arrows on a keyboard, by swiping left or right on a touch screen, or by using a tapping gesture with a Leap Motion.</span>
+				<span id="grid-button" class="grid-off"><img src="grid.png"></span>
+				<span id="counter"></span>		
 			</div>
 		</footer>
+
 
 		<!--http://handlebarsjs.com/-->
 		<script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/1.0.rc.2/handlebars.min.js"></script>
 		<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
 		<script src="swipe.js"></script>
 		<script src="//js.leapmotion.com/0.2.0/leap.min.js"></script>
+		<script id="object-grid-template" type="text/template">
+			{{#records}}
+				<img src="{{primaryimageurl}}?height=150">
+			{{/records}}
+		</script>
 		<script id="random-set-template" type="text/template">
 			<div id="data">				
 				<div id="slider" class="swipe">
@@ -123,12 +159,12 @@
 				</div>
 			</div>
 		</script>	
-		<script id="stats-info-template" type="text/template">	
-			{{#statsdates}} {{start}} to {{end}} {{/statsdates}}
-		</script>
 		<script>
 			$(function() {
 				$("#content").height($(window).height() - $("header").innerHeight() - $("footer").innerHeight());
+				$("#object-grid").height($("#content").height());
+				$("#random-set").height($("#content").height());
+				$("#loader").height($("#content").height());
 
 				$("#info-button").on("click", function() {
 					toggleObjectInfoPanel();
@@ -142,24 +178,12 @@
 					$('#sets-message').toggle();
 				});
 
-				$("#sets-coins-button").on("click", function() {
-					getRandomObjects("coins");
+				$(".interest-button").on("click", function() {
+					getRandomObjects($(this).data("field"), $(this).data("value"));
 				});
 
-				$("#sets-photographs-button").on("click", function() {
-					getRandomObjects("photographs");
-				});
-
-				$("#sets-paintings-button").on("click", function() {
-					getRandomObjects("paintings");
-				});
-
-				$("#sets-prints-button").on("click", function() {
-					getRandomObjects("prints");
-				});
-
-				$("#sets-drawings-button").on("click", function() {
-					getRandomObjects("drawings");
+				$("#grid-button").on("click", function() {
+					toggleGrid();
 				});
 
 				var imageWidth = $("#content").innerWidth();
@@ -177,39 +201,69 @@
     					case 37: // left
         					mySwipe.prev();
         					break;
+        				case 38: //up
+        					//show the grid
+							toggleGrid();
+        					break;
         				case 39: // right
 							mySwipe.next();
+							break;
+						case 40: //down
+							//hide the grid
+        					toggleGrid();
 							break;
 						case 73: // i
 							toggleObjectInfoPanel();
 							break;
 						default:
+							console.log(e.keyCode);
 					}
 				});
 			});
 
-			function getRandomObjects(setName) {
-				set = setName || 'paintings';
+			function getRandomObjects(field, value) {
+				var v = value || '*';
+				var f = field || 'classification';
+				var baseURL = 'http://api.harvardartmuseums.org/collection/object/random';
+				var urlParameters = '?size=25&i=1&q=' + f + ':' + v;
 
+				$('#object-grid').hide();
 				$('#random-set').hide();
 				$('#loader').show();
 
-				$.getJSON('http://api.harvardartmuseums.org/collection/object/random?size=25&i=1&q=classification:' + set, function(data) {
+				$.getJSON(baseURL + urlParameters, function(data) {
+					var gridSource = $('#object-grid-template').html();
+					var gridTemplate = Handlebars.compile(gridSource);
+					var gridInfo = gridTemplate(data);
+					$('#object-grid').html(gridInfo);
+
 					var source = $('#random-set-template').html();
 					var template = Handlebars.compile(source);
 					var info = template(data);
-
-
 					$('#random-set').html(info);
-					$('#loader').hide();
+
+					// $('#object-grid').show();
 					$('#random-set').show();
+					
 					window.mySwipe = Swipe(document.getElementById('slider'), {callback: updateNavigator});
 					updateNavigator(0,null);
+
+					$('#loader').hide();
 				});
 			}
 
 			function toggleObjectInfoPanel() {
 				$(".object-panel").toggle();
+			}
+
+			function toggleGrid() {
+				if ($("#object-grid").is(":visible")) {
+        			$("#object-grid").slideUp('fast');
+					$("#grid-button").removeClass("grid-on").addClass("grid-off");
+        		} else {
+					$("#object-grid").slideDown('fast');
+					$("#grid-button").addClass("grid-on").removeClass("grid-off");
+				}
 			}
 
 			function updateNavigator(i,e) {
@@ -227,6 +281,7 @@
 							mySwipe.next();	
 							break;
 						case 'screenTap':
+							toggleGrid();
 							break;
 						case 'swipe':
 							if (frame.gestures[0].state === 'stop') {
@@ -235,8 +290,7 @@
 							break;
 					}		
 				}
-			});
-			
+			});			
 		</script>
 	</body>
 </html>
