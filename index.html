@@ -13,7 +13,8 @@
 			#loader .message {font-size: 1.4em;}
 
 			#object-grid {position:fixed;z-index:9999;height: 100%;background: #ffffff;opacity: 0.95;bottom: 36px;}
-			#object-grid img {float: left;margin: 5px;}
+			#object-grid img {float: left;margin: 2px;padding: 5px;cursor: pointer;}
+			#object-grid img.highlight {background: #ff0000;}
 
 			.object-panel {float:right;width:250px;text-align:left;top:0px;position:fixed;right:0px;height: 100%;background: #ffffff;opacity: 0.95;padding-left: 10px;padding-right: 10px;}
 			.object-panel .object-color-swatch {float:left;width:10px;height:10px;}		
@@ -161,10 +162,11 @@
 		</script>	
 		<script>
 			$(function() {
-				$("#content").height($(window).height() - $("header").innerHeight() - $("footer").innerHeight());
-				$("#object-grid").height($("#content").height());
-				$("#random-set").height($("#content").height());
-				$("#loader").height($("#content").height());
+				var contentHeight = $(window).height() - $("header").innerHeight() - $("footer").innerHeight();
+				$("#content").height(contentHeight);
+				$("#object-grid").height(contentHeight);
+				$("#random-set").height(contentHeight);
+				$("#loader").height(contentHeight);
 
 				$("#info-button").on("click", function() {
 					toggleObjectInfoPanel();
@@ -242,11 +244,16 @@
 					var info = template(data);
 					$('#random-set').html(info);
 
-					// $('#object-grid').show();
 					$('#random-set').show();
-					
+
 					window.mySwipe = Swipe(document.getElementById('slider'), {callback: updateNavigator});
 					updateNavigator(0,null);
+
+					$("#object-grid img").on("click", function() {
+						var s = $("#object-grid img").index(this);
+						mySwipe.slide(s,500);
+						toggleGrid();
+					});
 
 					$('#loader').hide();
 				});
@@ -268,6 +275,9 @@
 
 			function updateNavigator(i,e) {
 				$("#counter").html(i+1 + ' of ' + mySwipe.getNumSlides());
+
+				$("#object-grid img").removeClass("highlight");
+				$($("#object-grid img").get(i)).addClass("highlight");
 			}
 
 			function swapImage(id, url) {
