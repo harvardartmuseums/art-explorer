@@ -20,6 +20,11 @@
 			.object-panel .object-color-swatch {float:left;width:10px;height:10px;}		
 			.object-panel .object-image {float:left; padding:2px;height:50px;}
 
+			/*Activity graph*/
+			.graph {font-size: 0.8em;font-family: verdana;}
+			path {stroke-width: 1;fill: none;}
+			.axis path, .axis line {fill: none;stroke: grey;stroke-width: 1;shape-rendering: crispEdges;}			
+
 			footer {background: #999999; padding: 10px;color: #333333;bottom:0;height:16px;z-index: 50000;}
 			footer .info-panel {}
 			footer #help-button, #sets-button {cursor: pointer;}
@@ -100,6 +105,7 @@
 		<script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/1.0.rc.2/handlebars.min.js"></script>
 		<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
 		<script src="swipe.js"></script>
+		<script src="d3.v3.min.js"></script>
 		<script src="//js.leapmotion.com/0.2.0/leap.min.js"></script>
 		<script id="object-grid-template" type="text/template">
 			{{#records}}
@@ -127,7 +133,7 @@
 									{{#if creationplace}}
 									<p>Created in {{creationplace}}</p>
 									<p>
-										<img src="https://maps.googleapis.com/maps/api/staticmap?center={{creationplace}}&zoom=2&size=250x100&markers=color:blue|{{creationplace}}&maptype=roadmap&sensor=false">
+										<img src="{{mapURL creationplace}}">
 									</p>
 									{{/if}}
 									<p>Dimensions: {{dimensions}}</p>
@@ -154,6 +160,8 @@
 									{{#if provenance}}
 										<p>Provenance: {{provenance}}</p>
 									{{/if}}
+									<p>Activity</p>
+									<p class="graph"></p>
 								</div>
 							</div>
 						{{/records}}
@@ -197,6 +205,10 @@
 					return image + imageURLParams;
 				});
 
+				Handlebars.registerHelper('mapURL', function(place) {
+					return 'https://maps.googleapis.com/maps/api/staticmap?center=' + place + '&zoom=2&size=250x100&markers=color:blue|' + place + '&maptype=roadmap&sensor=false';
+				});
+
 				getRandomObjects();
 
 				$(window).on('keydown', function (e) {
@@ -227,8 +239,8 @@
 			function getRandomObjects(field, value) {
 				var v = value || '*';
 				var f = field || 'classification';
-				var baseURL = 'http://api.harvardartmuseums.org/collection/object/random';
-				var urlParameters = '?size=25&i=1&q=' + f + ':' + v;
+				var baseURL = 'http://api.harvardartmuseums.org/collection/object';
+				var urlParameters = '?s=random&size=25&i=1&q=' + f + ':' + v;
 
 				$('#object-grid').hide();
 				$('#random-set').hide();
@@ -286,10 +298,97 @@
 
 				$("#object-grid img").removeClass("highlight");
 				$($("#object-grid img").get(i)).addClass("highlight");
+
+				makeActivityGraph();
 			}
 
 			function swapImage(id, url) {
 				$("#object-"+id).attr('src', url);
+			}
+
+
+			//See http://bl.ocks.org/mbostock/3884955
+			var margin = {top: 5, right: 5, bottom: 20, left: 30},
+			    width = 250 - margin.left - margin.right,
+			    height = 100 - margin.top - margin.bottom;
+
+			var parseDate = d3.time.format("%Y-%m").parse;
+
+			var x = d3.time.scale().range([0, width]);
+			var y = d3.scale.linear().range([height, 0]);
+
+			var color = d3.scale.category10();
+
+			var xAxis = d3.svg.axis()
+				.scale(x)
+			    .orient("bottom").ticks(5);
+
+			var yAxis = d3.svg.axis()
+				.scale(y)
+			    .orient("left").ticks(3);
+
+			var line = d3.svg.line()
+			    .interpolate("basis")
+			    .x(function(d) { return x(d.activitydate); })
+			    .y(function(d) { return y(d.totalcount); });
+
+			function makeActivityGraph() {
+				var objectid = $("div").find("[data-index=" + mySwipe.getPos() + "]").data("object-id");
+				var g = $("div").find("[data-object-id=" + objectid + "] .object-panel .graph");
+				var url = "http://api.harvardartmuseums.org/collection/object/" + objectid + "/activity";
+
+				if (d3.select(g[0]).select("svg").empty()) {
+					var svg = d3.select(g[0])
+						.append("svg")
+							.attr("width", width + margin.left + margin.right)
+							.attr("height", height + margin.top + margin.bottom)
+						.append("g")
+							.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
+
+					d3.json(url, function(error, data) {
+				    	color.domain(d3.keys(data[0]).filter(function(key) {
+				    			return key !== "activitydate";}));
+
+					    data.forEach(function(d) {
+					        d.activitydate = parseDate(d.activitydate);
+					    });
+
+					    var totals = color.domain().map(function(name) {
+					    	return {
+					    		name: name,
+					    		values: data.map(function(d) {
+					    			return {activitydate: d.activitydate, totalcount: +d[name]};
+					    		})
+					    	};
+					    });
+
+					    // Scale the range of the data
+					    x.domain(d3.extent(data, function(d) { return d.activitydate; }));
+					    y.domain([
+					    	d3.min(totals, function(c) {return d3.min(c.values, function(v) {return v.totalcount;})}),
+							d3.max(totals, function(c) {return d3.max(c.values, function(v) {return v.totalcount;})})
+					    ]);
+
+					    svg.append("g")         // Add the X Axis
+					        .attr("class", "x axis")
+					        .attr("transform", "translate(0," + height + ")")
+					        .call(xAxis);
+
+					    svg.append("g")         // Add the Y Axis
+					        .attr("class", "y axis")
+					        .call(yAxis);
+
+					    var total = svg.selectAll(".total")
+					    		.data(totals)
+					    	.enter().append("g")
+					    		.attr("class", "total");
+
+					    total.append("path")
+					    	.attr("class", "line")
+					    	.attr("d", function(d) {return line(d.values); })
+					    	.style("stroke", function(d) {return color(d.name); });
+					});			
+				}	
 			}
 
 			Leap.loop({enableGestures: true}, function(frame) {
