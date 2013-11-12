@@ -5,10 +5,10 @@
 		<title>Art Randomizer | Harvard Art Museums</title>
 		<style type="text/css">
 			body {background: #ffffff;color: #000000;font-family: verdana;font-size: 0.8em;margin: 0px;padding: 0px;}
-			header {background: #e7e7e7; padding: 10px;}
+			header {background: #e7e7e7; padding: 5px 10px 5px 10px;}
 
 			#content {overflow: hidden;}
-			#data {margin: 0px 0px 0px 0px;padding: 0px;width: 100%;}
+			#random-set {margin: 0px 0px 0px 0px;padding: 0px;width: 100%;}
 			#loader {text-align: center;width: 100%;display: none;z-index: 100000;background: white;}
 			#loader .message {font-size: 1.4em;}
 
@@ -36,9 +36,9 @@
 			footer .off {opacity:0.6;}
 			footer #counter {float: right;}
 
-			.swipe {overflow: hidden;visibility: hidden;position: relative;}
-			.swipe-wrap {text-align: center;overflow: hidden;position: relative;}
-			.swipe-wrap > div {float:left;position: relative;}
+			.swipe {overflow: hidden;visibility: hidden;position: relative;height: inherit;}
+			.swipe-wrap {text-align: center;overflow: hidden;position: relative;height: inherit;}
+			.swipe-wrap > div {float:left;position: relative;height: inherit;}
 		</style>
 		<script type="text/javascript">
 		  var _gaq = _gaq || [];
@@ -113,59 +113,57 @@
 			{{/records}}
 		</script>
 		<script id="random-set-template" type="text/template">
-			<div id="data">				
-				<div id="slider" class="swipe">
-					<div class="swipe-wrap">
-						{{#records}}
-							<div data-object-id="{{objectid}}">
-								<div><img id="object-{{objectid}}" src="{{imageURL primaryimageurl}}"></div>
-								<div class="object-panel">						
-									<p><a href="{{url}}">{{title}}</a></p>
-									<p>{{dated}}</p>
-									<p>{{classification}}</p>
-									<p>{{medium}}</p>
-									<p>
-										{{#people}}
-											{{role}}: {{prefix}} {{displayname}}<br/>
-										{{/people}}
-									</p>
-									<!-- <p>{{technique}}</p>	-->
-									{{#if creationplace}}
-									<p>Created in {{creationplace}}</p>
-									<p>
-										<img src="{{mapURL creationplace}}">
-									</p>
-									{{/if}}
-									<p>Dimensions: {{dimensions}}</p>
-									<p>
-										{{#colors}}
-											<div class="object-color-swatch" style="background:{{color}};" title="{{color}}, {{hue}}, {{percent}}"></div>
-										{{/colors}}
-										<div style="clear:both"></div>
-									</p>
-									<p>
-										{{#images}}
-											<div class="object-image"><a href="#" onclick="swapImage({{../objectid}},'{{imageURL baseimageurl}}')"><img src="{{baseimageurl}}?width=50&height=50"></a></div>
-										{{/images}}
-										<div style="clear:both"></div>
-									</p>
-									<p>Creditline: {{creditline}}</p>
-									<p>Object number: {{objectnumber}}</p>
-									{{#if description}}
-										<p>Description: {{description}}</p>
-									{{/if}}
-									{{#if commentary}}
-										<p>Commentary: {{commentary}}</p>
-									{{/if}}
-									{{#if provenance}}
-										<p>Provenance: {{provenance}}</p>
-									{{/if}}
-									<p>Activity</p>
-									<p class="graph"></p>
-								</div>
+			<div id="slider" class="swipe">
+				<div class="swipe-wrap">
+					{{#records}}
+						<div data-object-id="{{objectid}}">
+							<div><img id="object-{{objectid}}" src="{{imageURL primaryimageurl}}"></div>
+							<div class="object-panel">						
+								<p><a href="{{url}}">{{title}}</a></p>
+								<p>{{dated}}</p>
+								<p>{{classification}}</p>
+								<p>{{medium}}</p>
+								<p>
+									{{#people}}
+										{{role}}: {{prefix}} {{displayname}}<br/>
+									{{/people}}
+								</p>
+								<!-- <p>{{technique}}</p>	-->
+								{{#if creationplace}}
+								<p>Created in {{creationplace}}</p>
+								<p>
+									<img src="{{mapURL creationplace}}">
+								</p>
+								{{/if}}
+								<p>Dimensions: {{dimensions}}</p>
+								<p>
+									{{#colors}}
+										<div class="object-color-swatch" style="background:{{color}};" title="{{color}}, {{hue}}, {{percent}}"></div>
+									{{/colors}}
+									<div style="clear:both"></div>
+								</p>
+								<p>
+									{{#images}}
+										<div class="object-image"><a href="#" onclick="swapImage({{../objectid}},'{{imageURL baseimageurl}}')"><img src="{{baseimageurl}}?width=50&height=50"></a></div>
+									{{/images}}
+									<div style="clear:both"></div>
+								</p>
+								<p>Creditline: {{creditline}}</p>
+								<p>Object number: {{objectnumber}}</p>
+								{{#if description}}
+									<p>Description: {{description}}</p>
+								{{/if}}
+								{{#if commentary}}
+									<p>Commentary: {{commentary}}</p>
+								{{/if}}
+								{{#if provenance}}
+									<p>Provenance: {{provenance}}</p>
+								{{/if}}
+								<p>Activity</p>
+								<p class="graph"></p>
 							</div>
-						{{/records}}
-					</div>
+						</div>
+					{{/records}}
 				</div>
 			</div>
 		</script>	
