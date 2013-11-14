@@ -5,7 +5,7 @@
 		<title>Art Randomizer | Harvard Art Museums</title>
 		<style type="text/css">
 			body {background: #ffffff;color: #000000;font-family: verdana;font-size: 0.8em;margin: 0px;padding: 0px;}
-			header {background: #e7e7e7; padding: 1px 10px 1px 10px;}
+			header {background: #e7e7e7; padding: 1px 10px 1px 10px;color: #58595b;}
 
 			#content {overflow: hidden;}
 			#random-set {margin: 0px 0px 0px 0px;padding: 0px;width: 100%;}
@@ -29,8 +29,9 @@
 			footer .info-panel {}
 			footer #help-button, #sets-button {cursor: pointer;}
 			footer .interest-button {cursor: pointer;}
-			footer .color-swatch {float:left;width:10px;height:10px;}	
-			footer #help-message, #sets-message {display: none;}
+			footer .interest-button:hover {background: white;}
+			footer .color-swatch {float:left;width:30px;height:30px;margin-right: 5px;}	
+			footer #help-message, #sets-message {display: none;width:25%;bottom:36px;left:0px;position: absolute;padding:20px;background: #c0c0c0;z-index:100000;}
 			footer .toggle-button {cursor: pointer;float:right;vertical-align:middle;margin-left:10px;}
 			footer .on {opacity:1.0;}
 			footer .off {opacity:0.6;}
@@ -69,31 +70,40 @@
 		</div>
 
 		<footer>
+			<div id="help-message">
+				<h2>How do I use this site?</h2>
+				<p>Navigate through the works of art by using the left, right, up, and down arrows on a keyboard, by swiping left or right on a touch screen, or by using a key and screen tapping gestures with a Leap Motion controller.</p>
+			</div>
+			<div id="sets-message">
+				<h2>What do you want to see?</h2>
+				<div style="padding-top:10px;padding-bottom:10px;" class="interest-button" data-field="classification" data-value="*">everything</div>
+				<div style="padding-top:10px;padding-bottom:10px;" class="interest-button" data-field="groupings" data-value="collections grid">highlights</div>
+				<div style="padding-top:10px;padding-bottom:10px;" class="interest-button" data-field="totalpageviews" data-value=">250">popular works of art</div>
+				<div style="padding-top:10px;padding-bottom:10px;">
+					<div class="interest-button" data-field="classification" data-value="coins">coins</div>
+					<div class="interest-button" data-field="classification" data-value="paintings">paintings</div>
+					<div class="interest-button" data-field="classification" data-value="prints">prints</div>
+					<div class="interest-button" data-field="classification" data-value="drawings">drawings</div>
+					<div class="interest-button" data-field="classification" data-value="photographs">photographs</div>
+					<div class="interest-button" data-field="classification" data-value="sculpture">sculpture</div>
+					<div class="interest-button" data-field="classification" data-value="textile">textiles</div>
+				</div>
+				<div style="padding-top:10px;padding-bottom:10px;">
+					<div class="interest-button color-swatch" data-field="hue" data-value="red" style="background:red"></div>
+					<div class="interest-button color-swatch" data-field="hue" data-value="orange" style="background:orange"></div>
+					<div class="interest-button color-swatch" data-field="hue" data-value="yellow" style="background:yellow"></div>
+					<div class="interest-button color-swatch" data-field="hue" data-value="green" style="background:green"></div>
+					<div class="interest-button color-swatch" data-field="hue" data-value="blue" style="background:blue"></div>
+					<div class="interest-button color-swatch" data-field="hue" data-value="violet" style="background:violet"></div>
+					<div class="interest-button color-swatch" data-field="hue" data-value="brown" style="background:brown"></div>
+					<div class="interest-button color-swatch" data-field="hue" data-value="white" style="background:white"></div>
+					<div class="interest-button color-swatch" data-field="hue" data-value="gray" style="background:gray"></div>
+					<div class="interest-button color-swatch" data-field="hue" data-value="black" style="background:black"></div>
+				</div>
+			</div>
 			<div class="info-panel">
-				<span id="sets-button">Interests</span>
-					<span id="sets-message"> &mdash;
-						<span class="interest-button" data-field="classification" data-value="*">everything</span>&nbsp;or
-						<span class="interest-button" data-field="groupings" data-value="collections grid">highlights</span>&nbsp;or
-						<span class="interest-button" data-field="classification" data-value="coins">coins</span>, 
-						<span class="interest-button" data-field="classification" data-value="paintings">paintings</span>, 
-						<span class="interest-button" data-field="classification" data-value="prints">prints</span>, 
-						<span class="interest-button" data-field="classification" data-value="drawings">drawings</span>, 
-						<span class="interest-button" data-field="classification" data-value="photographs">photographs</span>, 
-						<span class="interest-button" data-field="classification" data-value="sculpture">sculpture</span>, 
-						<span class="interest-button" data-field="classification" data-value="textile">textiles</span>&nbsp;or&nbsp;
-						<span class="interest-button" data-field="hue" data-value="red" style="background:red">&nbsp;&nbsp;&nbsp;</span>
-						<span class="interest-button" data-field="hue" data-value="orange" style="background:orange">&nbsp;&nbsp;&nbsp;</span>
-						<span class="interest-button" data-field="hue" data-value="yellow" style="background:yellow">&nbsp;&nbsp;&nbsp;</span>
-						<span class="interest-button" data-field="hue" data-value="green" style="background:green">&nbsp;&nbsp;&nbsp;</span>
-						<span class="interest-button" data-field="hue" data-value="blue" style="background:blue">&nbsp;&nbsp;&nbsp;</span>
-						<span class="interest-button" data-field="hue" data-value="violet" style="background:violet">&nbsp;&nbsp;&nbsp;</span>
-						<span class="interest-button" data-field="hue" data-value="brown" style="background:brown">&nbsp;&nbsp;&nbsp;</span>
-						<span class="interest-button" data-field="hue" data-value="white" style="background:white">&nbsp;&nbsp;&nbsp;</span>
-						<span class="interest-button" data-field="hue" data-value="gray" style="background:gray">&nbsp;&nbsp;&nbsp;</span>
-						<span class="interest-button" data-field="hue" data-value="black" style="background:black">&nbsp;&nbsp;&nbsp;</span>
-					</span>&nbsp;&nbsp;|&nbsp;
-				<span id="help-button">Help</span>
-					<span id="help-message"> &mdash; Navigate by using the left and right arrows on a keyboard, by swiping left or right on a touch screen, or by using a tapping gesture with a Leap Motion.</span>
+				<span id="sets-button">Interests</span>&nbsp;|
+				<span id="help-button">Help</span>					
 				<span id="grid-button" class="toggle-button off"><img src="grid.png"></span>
 				<span id="info-button" class="toggle-button on"><img src="info.png"></span>
 				<span id="counter"></span>		
