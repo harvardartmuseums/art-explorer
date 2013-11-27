@@ -37,6 +37,9 @@
 			footer .off {opacity:0.6;}
 			footer #counter {float: right;}
 
+			footer input {border:0px;margin:0px;height:25px;padding-left:5px;}
+			footer button {border:0px;height:27px;}
+
 			.red {background:red;}
 			.orange {background:orange;}
 			.yellow {background:yellow;}
@@ -99,7 +102,7 @@
 					<div class="interest-button" data-field="classification" data-value="sculpture">sculpture</div>
 					<div class="interest-button" data-field="classification" data-value="textile">textiles</div>
 				</div>
-				<div style="padding-top:10px;padding-bottom:10px;">
+				<div style="padding-top:10px;padding-bottom:10px;height:30px;">
 					<div class="interest-button color-swatch red" data-field="hue" data-value="red"></div>
 					<div class="interest-button color-swatch orange" data-field="hue" data-value="orange"></div>
 					<div class="interest-button color-swatch yellow" data-field="hue" data-value="yellow"></div>
@@ -110,6 +113,9 @@
 					<div class="interest-button color-swatch white" data-field="hue" data-value="white"></div>
 					<div class="interest-button color-swatch gray" data-field="hue" data-value="gray"></div>
 					<div class="interest-button color-swatch black" data-field="hue" data-value="black"></div>
+				</div>
+				<div style="padding-top:10px;padding-bottom:10px;">
+					<input type="text" id="keywords" title="Enter your search term" value=""><button id="find-it">Find it</button>
 				</div>
 			</div>
 			<div class="info-panel">
@@ -212,6 +218,10 @@
 					getRandomObjects($(this).data("field"), $(this).data("value"));
 				});
 
+				$("#find-it").on("click", function() {
+					getRandomObjects("title", $("#keywords").val());
+				});
+
 				$("#grid-button").on("click", function() {
 					toggleGrid();
 				});
@@ -257,7 +267,7 @@
 
 			function getRandomObjects(field, value) {
 				var v = value || '*';
-				var f = field || 'classification';
+				var f = field || '*';
 				var baseURL = 'http://api.harvardartmuseums.org/collection/object';
 				var urlParameters = '?s=random&size=25&i=1&q=' + f + ':' + v;
 
