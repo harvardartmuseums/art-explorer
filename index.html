@@ -25,6 +25,10 @@
 			path {stroke-width: 1;fill: none;}
 			.axis path, .axis line {fill: none;stroke: grey;stroke-width: 1;shape-rendering: crispEdges;}			
 
+			/*Tags*/
+			.tag {padding-right: 5px;padding-bottom: 5px;float: left;}
+			.no-tags {font-style: italic;}
+
 			footer {background: #999999; padding: 10px;color: #333333;bottom:0;height:16px;z-index: 50000;}
 			footer .info-panel {}
 			footer #help-button, #sets-button {cursor: pointer;}
@@ -139,6 +143,15 @@
 				<img src="{{primaryimageurl}}?height=150">
 			{{/records}}
 		</script>
+		<script id="object-tags-template" type="text/temptale">
+			{{#if .}}
+				{{#.}}
+					<span class="tag">{{tag}}</span>
+				{{/.}}
+			{{else}}
+				<span class="no-tags">No tags yet</span>
+			{{/if}}
+		</script>
 		<script id="random-set-template" type="text/template">
 			<div id="slider" class="swipe">
 				<div class="swipe-wrap">
@@ -188,6 +201,9 @@
 								{{/if}}
 								<p>Activity</p>
 								<p class="graph"></p>
+								<p>Tags</p>
+								<!--<p><input type="text" class="tag-input"><button class="tag-button" onclick="addTag({{objectid}})">add a tag</button></p>-->
+								<p class="tags"></p>
 							</div>
 						</div>
 					{{/records}}
@@ -195,6 +211,8 @@
 			</div>
 		</script>	
 		<script>
+			var apiBaseURL = "http://api.harvardartmuseums.org";
+
 			$(function() {
 				var contentHeight = $(window).height() - $("header").innerHeight() - $("footer").innerHeight();
 				$("#content").height(contentHeight);
@@ -268,7 +286,7 @@
 			function getRandomObjects(field, value) {
 				var v = value || '*';
 				var f = field || '*';
-				var baseURL = 'http://api.harvardartmuseums.org/collection/object';
+				var baseURL = apiBaseURL + '/collection/object';
 				var urlParameters = '?s=random&size=25&i=1&q=' + f + ':' + v;
 
 				$('#object-grid').hide();
@@ -329,12 +347,34 @@
 				$($("#object-grid img").get(i)).addClass("highlight");
 
 				makeActivityGraph();
+				makeTagsGrid();
 			}
 
 			function swapImage(id, url) {
 				$("#object-"+id).attr('src', url);
 			}
 
+			function makeTagsGrid() {
+				var objectid = $("div").find("[data-index=" + mySwipe.getPos() + "]").data("object-id");
+				var url = apiBaseURL + "/collection/object/" + objectid + "/tags";
+
+				$.getJSON(url, function(data) {
+					var tagsSource = $('#object-tags-template').html();
+					var tagsTemplate = Handlebars.compile(tagsSource);
+					var tagsInfo = tagsTemplate(data);
+					var tags = $("div").find("[data-object-id=" + objectid + "] .object-panel .tags");
+					$(tags).html(tagsInfo);					
+				});
+			};
+
+			function addTag(id) {
+				var objectid = id;
+				var tags = $("div").find("[data-object-id=" + objectid + "] .object-panel .tags");
+				var tag = $("div").find("[data-object-id=" + objectid + "] .object-panel input");
+
+				$(tags).append('<span class="tag">' + $(tag).val() + '</span>');
+				$(tag).val("").focus();
+			}
 
 			//See http://bl.ocks.org/mbostock/3884955
 			var margin = {top: 5, right: 5, bottom: 20, left: 30},
@@ -364,7 +404,7 @@
 			function makeActivityGraph() {
 				var objectid = $("div").find("[data-index=" + mySwipe.getPos() + "]").data("object-id");
 				var g = $("div").find("[data-object-id=" + objectid + "] .object-panel .graph");
-				var url = "http://api.harvardartmuseums.org/collection/object/" + objectid + "/activity";
+				var url = apiBaseURL + "/collection/object/" + objectid + "/activity";
 
 				if (d3.select(g[0]).select("svg").empty()) {
 					var svg = d3.select(g[0])
