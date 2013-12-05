@@ -159,7 +159,7 @@
 						<div data-object-id="{{objectid}}">
 							<div><img id="object-{{objectid}}" src="{{imageURL primaryimageurl}}"></div>
 							<div class="object-panel">						
-								<p><a href="{{url}}">{{title}}</a></p>
+								<p>{{title}}</p>
 								<p>{{dated}}</p>
 								<p>{{classification}}</p>
 								<p>{{medium}}</p>
@@ -189,7 +189,7 @@
 									<div style="clear:both"></div>
 								</p>
 								<p>Creditline: {{creditline}}</p>
-								<p>Object number: {{objectnumber}}</p>
+								<p>Object number: {{objectnumber}} <a target="_window" title="View this on the museums' main website" href="{{url}}"><img src="popouticon.png"></a></p>
 								{{#if description}}
 									<p>Description: {{description}}</p>
 								{{/if}}
