@@ -13,7 +13,7 @@
 			#loader .message {font-size: 1.4em;}
 
 			#object-grid {position:fixed;z-index:9999;height: 100%;background: #ffffff;opacity: 0.95;bottom: 36px;width: 100%;}
-			#object-grid img {float: left;margin: 2px;padding: 5px;cursor: pointer;}
+			#object-grid img {float: left;margin: 2px;padding: 5px;cursor: pointer;height:150px;}
 			#object-grid img.highlight {background: #ff0000;}
 
 			.object-panel {float:right;width:275px;text-align:left;top:0px;position:fixed;right:0px;height: 100%;background: #ffffff;opacity: 0.95;padding-left: 10px;padding-right: 10px;overflow-y:scroll;}
@@ -141,7 +141,7 @@
 		<script src="//js.leapmotion.com/0.2.0/leap.min.js"></script>
 		<script id="object-grid-template" type="text/template">
 			{{#records}}
-				<img src="{{primaryimageurl}}?height=150">
+				<img src="{{imageURLMedium primaryimageurl}}">
 			{{/records}}
 		</script>
 		<script id="object-tags-template" type="text/temptale">
@@ -247,10 +247,23 @@
 
 				var imageWidth = $("#content").innerWidth();
 				var imageHeight = $("#content").innerHeight();
-				var imageURLParams = '?width=' + imageWidth + '&height=' + imageHeight;
+				var imageURLParamsL = '?width=' + imageWidth + '&height=' + imageHeight;
+				var imageURLParamsM = '?height=150';
 
 				Handlebars.registerHelper('imageURL', function(image) {
-					return image + imageURLParams;
+					if (image) {
+						return image + imageURLParamsL;
+					} else {
+						return "http://www.harvardartmuseums.org/sites/harvardartmuseums.org/files/no_image_big.jpg";
+					}
+				});
+
+				Handlebars.registerHelper('imageURLMedium', function(image) {
+					if (image) {
+						return image + imageURLParamsM;
+					} else {
+						return "http://www.harvardartmuseums.org/sites/harvardartmuseums.org/files/no_image.jpg";
+					}
 				});
 
 				Handlebars.registerHelper('mapURL', function(place) {
