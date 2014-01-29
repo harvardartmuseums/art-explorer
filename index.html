@@ -147,7 +147,7 @@
 		<script id="object-tags-template" type="text/temptale">
 			{{#if .}}
 				{{#.}}
-					<span class="tag">{{tag}}</span>
+					<span class="tag"><a href="#" onclick="getRandomObjects('tag','{{tag}}')">{{tag}}</a></span>
 				{{/.}}
 			{{else}}
 				<span class="no-tags">No tags yet</span>
