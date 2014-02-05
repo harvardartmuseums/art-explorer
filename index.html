@@ -301,7 +301,7 @@
 				var v = value || '*';
 				var f = field || '*';
 				var baseURL = apiBaseURL + '/collection/object';
-				var urlParameters = '?s=random&size=25&i=1&q=' + f + ':' + v;
+				var urlParameters = '?apikey=ac622520-8e83-11e3-bc70-7d9574e88e08&s=random&size=25&i=1&q=' + f + ':' + v;
 
 				$('#object-grid').hide();
 				$('#random-set').hide();
@@ -370,7 +370,7 @@
 
 			function makeTagsGrid() {
 				var objectid = $("div").find("[data-index=" + mySwipe.getPos() + "]").data("object-id");
-				var url = apiBaseURL + "/collection/object/" + objectid + "/tags";
+				var url = apiBaseURL + "/collection/object/" + objectid + "/tags?apikey=ac622520-8e83-11e3-bc70-7d9574e88e08";
 
 				$.getJSON(url, function(data) {
 					var tagsSource = $('#object-tags-template').html();
@@ -418,7 +418,7 @@
 			function makeActivityGraph() {
 				var objectid = $("div").find("[data-index=" + mySwipe.getPos() + "]").data("object-id");
 				var g = $("div").find("[data-object-id=" + objectid + "] .object-panel .graph");
-				var url = apiBaseURL + "/collection/object/" + objectid + "/activity";
+				var url = apiBaseURL + "/collection/object/" + objectid + "/activity?apikey=ac622520-8e83-11e3-bc70-7d9574e88e08";
 
 				if (d3.select(g[0]).select("svg").empty()) {
 					var svg = d3.select(g[0])
