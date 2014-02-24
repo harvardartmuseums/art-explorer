@@ -94,10 +94,17 @@
 			</div>
 			<div id="sets-message">
 				<h2>What do you want to see?</h2>
-				<div style="padding-top:10px;padding-bottom:10px;" class="interest-button" data-field="classification" data-value="*">everything</div>
-				<div style="padding-top:10px;padding-bottom:10px;" class="interest-button" data-field="groupings" data-value="collections grid">highlights</div>
-				<div style="padding-top:10px;padding-bottom:10px;" class="interest-button" data-field="totalpageviews" data-value=">250">most active works of art</div>
-				<div style="padding-top:10px;padding-bottom:10px;" class="interest-button" data-field="totalpageviews" data-value="<1">least active works of art</div>
+				<div style="padding-top:10px;padding-bottom:10px;">
+					<div class="interest-button" data-field="classification" data-value="*">everything</div>
+					<div class="interest-button" data-field="groupings.group" data-value="Collections Grid">highlights</div>
+					<div class="interest-button" data-field="totalpageviews" data-value=">250">most active works of art</div>
+					<div class="interest-button" data-field="totalpageviews" data-value="<1">least active works of art</div>
+				</div>
+				<div style="padding-top:10px;padding-bottom:10px;">
+					<div class="interest-button" data-field="locations.gallery" data-value="1220">Wertheim Collection</div>
+					<div class="interest-button" data-field="groupings.group" data-value="Gordon Ward Gahan Collection">Gordon Gahan Collection</div>
+					<div class="interest-button" data-field="groupings.group" data-value="The Social Museum Collection">Social Museum Collection</div>
+				</div>
 				<div style="padding-top:10px;padding-bottom:10px;">
 					<div class="interest-button" data-field="classification" data-value="coins">coins</div>
 					<div class="interest-button" data-field="classification" data-value="paintings">paintings</div>
@@ -213,6 +220,7 @@
 		</script>	
 		<script>
 			var apiBaseURL = "http://api.harvardartmuseums.org";
+			var apiKey = "ac622520-8e83-11e3-bc70-7d9574e88e08";
 
 			$(function() {
 				var contentHeight = $(window).height() - $("header").innerHeight() - $("footer").innerHeight();
@@ -300,8 +308,11 @@
 			function getRandomObjects(field, value) {
 				var v = value || '*';
 				var f = field || '*';
+
+				v = /\s/g.test(v) ? '"' + v + '"' : v;
+
 				var baseURL = apiBaseURL + '/collection/object';
-				var urlParameters = '?apikey=ac622520-8e83-11e3-bc70-7d9574e88e08&s=random&size=25&i=1&q=' + f + ':' + v;
+				var urlParameters = '?apikey=' + apiKey + '&s=random&size=25&i=1&q=' + f + ':' + v;
 
 				$('#object-grid').hide();
 				$('#random-set').hide();
@@ -370,7 +381,7 @@
 
 			function makeTagsGrid() {
 				var objectid = $("div").find("[data-index=" + mySwipe.getPos() + "]").data("object-id");
-				var url = apiBaseURL + "/collection/object/" + objectid + "/tags?apikey=ac622520-8e83-11e3-bc70-7d9574e88e08";
+				var url = apiBaseURL + "/collection/object/" + objectid + "/tags?apikey=" + apiKey;
 
 				$.getJSON(url, function(data) {
 					var tagsSource = $('#object-tags-template').html();
@@ -418,7 +429,7 @@
 			function makeActivityGraph() {
 				var objectid = $("div").find("[data-index=" + mySwipe.getPos() + "]").data("object-id");
 				var g = $("div").find("[data-object-id=" + objectid + "] .object-panel .graph");
-				var url = apiBaseURL + "/collection/object/" + objectid + "/activity?apikey=ac622520-8e83-11e3-bc70-7d9574e88e08";
+				var url = apiBaseURL + "/collection/object/" + objectid + "/activity?apikey=" + apiKey;
 
 				if (d3.select(g[0]).select("svg").empty()) {
 					var svg = d3.select(g[0])
