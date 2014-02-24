@@ -90,7 +90,7 @@
 		<footer>
 			<div id="help-message">
 				<h2>How do I use this site?</h2>
-				<p>Navigate through the works of art by using the left, right, up, and down arrows on a keyboard, by swiping left or right on a touch screen, or by using a key and screen tapping gestures with a Leap Motion controller.</p>
+				<p>Navigate through the works of art by using the left, right, up, and down arrows on a keyboard or by swiping left or right on a touch screen.</p>
 			</div>
 			<div id="sets-message">
 				<h2>What do you want to see?</h2>
@@ -145,7 +145,6 @@
 		<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
 		<script src="swipe.js"></script>
 		<script src="d3.v3.min.js"></script>
-		<script src="//js.leapmotion.com/0.2.0/leap.min.js"></script>
 		<script id="object-grid-template" type="text/template">
 			{{#records}}
 				<img src="{{imageURLMedium primaryimageurl}}">
@@ -483,25 +482,7 @@
 					    	.style("stroke", function(d) {return color(d.name); });
 					});			
 				}	
-			}
-
-			Leap.loop({enableGestures: true}, function(frame) {
-				if (frame.gestures.length > 0) {		
-					switch (frame.gestures[0].type)	{
-						case 'keyTap':
-							mySwipe.next();	
-							break;
-						case 'screenTap':
-							toggleGrid();
-							break;
-						case 'swipe':
-							if (frame.gestures[0].state === 'stop') {
-								// console.log(frame.gestures[0].direction[0]);				
-							}
-							break;
-					}		
-				}
-			});			
+			}			
 		</script>
 	</body>
 </html>
