@@ -5,7 +5,7 @@
 		<title>Art Explorer | Harvard Art Museums</title>
 		<style type="text/css">
 			body {background: #ffffff;color: #000000;font-family: verdana;font-size: 0.8em;margin: 0px;padding: 0px;}
-			/*header {background: #e7e7e7; padding: 1px 10px 1px 10px;color: #58595b;}*/
+			header {background: #e7e7e7; padding: 1px 10px 1px 10px;color: #58595b;}
 			
             logo {position: absolute; top:45px; left:45px;}
 
@@ -14,7 +14,7 @@
 			#loader {text-align: center;width: 100%;display: none;z-index: 100000;background: white;}
 			#loader .message {font-size: 1.4em;}
 
-			#object-grid {position:fixed;z-index:9999;height: 100%;background: #ffffff;opacity: 0.95;bottom: 36px;width: 100%;}
+			#object-grid, #object-suns {position:fixed;z-index:9999;height: 100%;background: #ffffff;opacity: 0.95;bottom: 36px;width: 100%;}
 			#object-grid img {float: left;margin: 2px;padding: 5px;cursor: pointer;height:150px;}
 			#object-grid img.highlight {background: #ff0000;}
 
@@ -77,9 +77,9 @@
 		</script>		
 	</head>
 	<body>
-		<!-- <header>
+		<header>
 			<h1>Art Explorer</h1>
-		</header> -->
+		</header>
 
 		<div id="content">
 			<div id="loader">
@@ -87,6 +87,7 @@
 				<img src="img/ajax-loader.gif">
 			</div>
 			<div id="object-grid"></div>
+			<div id="object-suns"></div>
 			<div id="random-set"></div>
 		</div>
 
@@ -112,13 +113,13 @@
 					<div class="interest-button" data-field="groupings.group" data-value="The Social Museum Collection">Social Museum Collection</div>
 				</div>
 				<div style="padding-top:10px;padding-bottom:10px;">
-					<div class="interest-button" data-field="classification" data-value="coins">coins</div>
-					<div class="interest-button" data-field="classification" data-value="paintings">paintings</div>
-					<div class="interest-button" data-field="classification" data-value="prints">prints</div>
-					<div class="interest-button" data-field="classification" data-value="drawings">drawings</div>
-					<div class="interest-button" data-field="classification" data-value="photographs">photographs</div>
-					<div class="interest-button" data-field="classification" data-value="sculpture">sculpture</div>
-					<div class="interest-button" data-field="classification" data-value="textile">textiles</div>
+					<div class="interest-button" data-field="classification" data-value="Coins">coins</div>
+					<div class="interest-button" data-field="classification" data-value="Paintings">paintings</div>
+					<div class="interest-button" data-field="classification" data-value="Prints">prints</div>
+					<div class="interest-button" data-field="classification" data-value="Drawings">drawings</div>
+					<div class="interest-button" data-field="classification" data-value="Photographs">photographs</div>
+					<div class="interest-button" data-field="classification" data-value="Sculpture">sculpture</div>
+					<div class="interest-button" data-field="classification" data-value="Textile Arts">textiles</div>
 				</div>
 				<div style="padding-top:10px;padding-bottom:10px;overflow:auto;">
 					<div class="interest-button color-swatch red" data-field="hue" data-value="red"></div>
@@ -141,6 +142,7 @@
 				<span id="sets-button">Interests</span>&nbsp;|
 				<span id="help-button">Help</span>					
 				<span id="grid-button" class="toggle-button off"><img src="img/grid.png"></span>
+				<span id="sun-button" class="toggle-button off"><img src="img/sun.png"></span>
 				<span id="info-button" class="toggle-button on"><img src="img/info.png"></span>
 				<span id="counter"></span>		
 			</div>
@@ -179,10 +181,18 @@
 								<p>{{medium}}</p>
 								<p>
 									{{#people}}
-										{{role}}: {{prefix}} <a href="#" onclick="getRandomObjects('constituentid',{{constituentid}})">{{displayname}}</a><br/>
+										{{role}}: {{prefix}} <a href="#" onclick="getRandomObjects('personid',{{personid}})">{{displayname}}</a><br/>
 									{{/people}}
 								</p>
 								<!-- <p>{{technique}}</p>	-->
+								{{#if details.coins}}
+									Date on coin: {{details.coins.dateoncoin}}<br/>
+									Die axis: {{details.coins.dieaxis}}<br/>
+									Metal: {{details.coins.metal}}<br/>
+									Denomination: {{details.coins.denomination}}<br/>
+									Obverse inscription: {{details.coins.obverseinscription}}<br/>
+									Reverse inscription: {{details.coins.reverseinscription}}<br/>
+								{{/if}}
 								{{#if creationplace}}
 								<p>Created in {{creationplace}}</p>
 								<p>
@@ -232,6 +242,7 @@
 				var contentHeight = $(window).height() - $("header").innerHeight() - $("footer").innerHeight();
 				$("#content").height(contentHeight);
 				$("#object-grid").height(contentHeight);
+				$("#object-suns").height(contentHeight);
 				$("#random-set").height(contentHeight);
 				$("#loader").height(contentHeight);
 
@@ -261,6 +272,10 @@
 
 				$("#grid-button").on("click", function() {
 					toggleGrid();
+				});
+
+				$("#sun-button").on("click", function() {
+					toggleSuns();
 				});
 
 				var imageWidth = $("#content").innerWidth();
@@ -309,6 +324,8 @@
 						case 73: // i
 							toggleObjectInfoPanel();
 							break;
+						case 86:
+							toggleSuns();
 						default:
 							console.log(e.keyCode);
 					}
@@ -325,6 +342,7 @@
 				var urlParameters = '?apikey=' + apiKey + '&s=random&size=25&i=1&q=' + f + ':' + v;
 
 				$('#object-grid').hide();
+				$('#object-suns').hide();
 				$('#random-set').hide();
 				$('#loader').show();
 
@@ -340,6 +358,11 @@
 					$('#random-set').html(info);
 
 					$('#random-set').show();
+
+					$("#object-suns").html("");
+					for (var i = 0; i < data.records.length; i++) {
+						makeSun(data.records[i]);
+					};
 
 					window.mySwipe = Swipe(document.getElementById('slider'), {callback: updateNavigator});
 					updateNavigator(0,null);
@@ -372,6 +395,16 @@
         		} else {
 					$("#object-grid").slideDown('fast');
 					$("#grid-button").addClass("on").removeClass("off");
+				}
+			}
+
+			function toggleSuns() {
+				if ($("#object-suns").is(":visible")) {
+        			$("#object-suns").slideUp('fast');
+					$("#sun-button").removeClass("on").addClass("off");
+        		} else {
+					$("#object-suns").slideDown('fast');
+					$("#sun-button").addClass("on").removeClass("off");
 				}
 			}
 
@@ -493,6 +526,40 @@
 					    	.style("stroke", function(d) {return color(d.name); });
 					});			
 				}	
+			}
+
+			function makeSun(record) {        
+				var width = 150,
+					height = 150;
+
+				var svg = d3.select("#object-suns").append("svg")
+		            	.attr("width", width)
+		            	.attr("height", height)
+		          	.append("g")
+		            	.attr("transform", "translate(0,0)");
+
+		        if (record.colors) {
+					var dot = svg.append("g")
+	                       .attr("class", "dots")
+	                    .selectAll(".dot")
+	                        .data(record.colors)
+	                    .enter().append("circle")
+	                        .attr("class", "dot")
+	                        .style("fill", function(d) { return d.color; })
+	                        .attr("cx", width/2)
+	                        .attr("cy", height/2)
+	                        .attr("r", function(d) { return d.percent*100; });
+
+                } else {
+					var dot = svg.append("g")
+	                       .attr("class", "dots")
+	                    	.append("circle")
+	                        .attr("class", "dot")
+	                        .style("fill", "#888888")
+	                        .attr("cx", width/2)
+	                        .attr("cy", height/2)
+	                        .attr("r", 50);
+	            } 
 			}			
 		</script>
 	</body>
