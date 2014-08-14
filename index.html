@@ -33,16 +33,16 @@
 
 			footer {background: #999999; padding: 10px;color: #333333;bottom:0;height:16px;z-index: 50000;}
 			footer .info-panel {}
-			footer #museums-button, #help-button, #sets-button {cursor: pointer;}
+			footer #help-button, #sets-button {cursor: pointer;}
 			footer .interest-button {cursor: pointer;}
 			footer .interest-button:hover {background: white;}
 			footer .color-swatch {float:left;width:30px;height:30px;margin-right: 5px;}	
-			footer #museums-message {display: none; height:100%;width: 100%; left:0px;position: absolute;bottom: 36px;background: #ffffff;z-index: 1000000;}
 			footer #help-message, #sets-message {display: none;width:25%;bottom:36px;left:0px;position: absolute;padding:20px;background: #c0c0c0;z-index:100000;}
 			footer .toggle-button {cursor: pointer;float:right;vertical-align:middle;margin-left:10px;}
 			footer .on {opacity:1.0;}
 			footer .off {opacity:0.6;}
 			footer #counter {float: right;}
+			footer #set-info {float: right;}
 
 			footer input {border:0px;margin:0px;height:25px;padding-left:5px;}
 			footer button {border:0px;height:27px;}
@@ -92,9 +92,6 @@
 		</div>
 
 		<footer>
-			<div id="museums-message">
-        		<img id="logo" src="img/harvardartmuseums.png">
-			</div>
 			<div id="help-message">
 				<h2>How do I use this site?</h2>
 				<p>Navigate through the works of art by using the left, right, up, and down arrows on a keyboard or by swiping left or right on a touch screen.</p>
@@ -103,14 +100,14 @@
 				<h2>What do you want to see?</h2>
 				<div style="padding-top:10px;padding-bottom:10px;">
 					<div class="interest-button" data-field="classification" data-value="*">everything</div>
-					<div class="interest-button" data-field="groupings.group" data-value="Collections Grid">highlights</div>
+					<div class="interest-button" data-field="groupings.name" data-value="Collections Grid">highlights</div>
 					<div class="interest-button" data-field="totalpageviews" data-value=">250">most active works of art</div>
 					<div class="interest-button" data-field="totalpageviews" data-value="<1">least active works of art</div>
 				</div>
 				<div style="padding-top:10px;padding-bottom:10px;">
-					<div class="interest-button" data-field="locations.gallery" data-value="1220">Wertheim Collection</div>
-					<div class="interest-button" data-field="groupings.group" data-value="Gordon Ward Gahan Collection">Gordon Gahan Collection</div>
-					<div class="interest-button" data-field="groupings.group" data-value="The Social Museum Collection">Social Museum Collection</div>
+					<div class="interest-button" data-field="gallery.gallerynumber" data-value="1220">Wertheim Collection</div>
+					<div class="interest-button" data-field="groupings.name" data-value="Gordon Ward Gahan Collection">Gordon Gahan Collection</div>
+					<div class="interest-button" data-field="groupings.name" data-value="The Social Museum Collection">Social Museum Collection</div>
 				</div>
 				<div style="padding-top:10px;padding-bottom:10px;">
 					<div class="interest-button" data-field="classification" data-value="Coins">coins</div>
@@ -145,6 +142,7 @@
 				<span id="sun-button" class="toggle-button off"><img src="img/sun.png"></span>
 				<span id="info-button" class="toggle-button on"><img src="img/info.png"></span>
 				<span id="counter"></span>		
+				<span id="set-info">We found <span id="totalrecords"></span> items. You are viewing item&nbsp;</span>		
 			</div>
 		</footer>
 
@@ -223,6 +221,7 @@
 								{{#if provenance}}
 									<p>Provenance: {{provenance}}</p>
 								{{/if}}
+								<p>Verification level: {{verificationlevel}}</p>
 								<p>Activity</p>
 								<p class="graph"></p>
 								<p>Tags</p>
@@ -248,10 +247,6 @@
 
 				$("#info-button").on("click", function() {
 					toggleObjectInfoPanel();
-				});
-
-				$("#museums-button").on("click", function() {
-					$('#museums-message').toggle();
 				});
 
 				$("#help-button").on("click", function() {
@@ -338,7 +333,7 @@
 
 				v = /\s/g.test(v) ? '"' + v + '"' : v;
 
-				var baseURL = apiBaseURL + '/collection/object';
+				var baseURL = apiBaseURL + '/object';
 				var urlParameters = '?apikey=' + apiKey + '&s=random&size=25&i=1&q=' + f + ':' + v;
 
 				$('#object-grid').hide();
@@ -358,6 +353,7 @@
 					$('#random-set').html(info);
 
 					$('#random-set').show();
+					$("#totalrecords").html(data.info.totalrecords);
 
 					$("#object-suns").html("");
 					for (var i = 0; i < data.records.length; i++) {
@@ -409,7 +405,7 @@
 			}
 
 			function updateNavigator(i,e) {
-				$("#counter").html(i+1 + ' of ' + mySwipe.getNumSlides());
+				$("#counter").html(i+1 + ' of ' + mySwipe.getNumSlides() + '.');
 
 				$("#object-grid img").removeClass("highlight");
 				$($("#object-grid img").get(i)).addClass("highlight");
@@ -424,7 +420,7 @@
 
 			function makeTagsGrid() {
 				var objectid = $("div").find("[data-index=" + mySwipe.getPos() + "]").data("object-id");
-				var url = apiBaseURL + "/collection/object/" + objectid + "/tags?apikey=" + apiKey;
+				var url = apiBaseURL + "/object/" + objectid + "/tags?apikey=" + apiKey;
 
 				$.getJSON(url, function(data) {
 					var tagsSource = $('#object-tags-template').html();
@@ -472,7 +468,7 @@
 			function makeActivityGraph() {
 				var objectid = $("div").find("[data-index=" + mySwipe.getPos() + "]").data("object-id");
 				var g = $("div").find("[data-object-id=" + objectid + "] .object-panel .graph");
-				var url = apiBaseURL + "/collection/object/" + objectid + "/activity?apikey=" + apiKey;
+				var url = apiBaseURL + "/object/" + objectid + "/activity?apikey=" + apiKey;
 
 				if (d3.select(g[0]).select("svg").empty()) {
 					var svg = d3.select(g[0])
