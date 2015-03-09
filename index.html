@@ -100,7 +100,7 @@
 				<h2>What do you want to see?</h2>
 				<div style="padding-top:10px;padding-bottom:10px;">
 					<div class="interest-button" data-field="classification" data-value="*">everything</div>
-					<div class="interest-button" data-field="groupings.name" data-value="Collections Grid">highlights</div>
+					<div class="interest-button" data-field="groupings.name" data-value="Collection Highlights">highlights</div>
 					<div class="interest-button" data-field="totalpageviews" data-value=">250">most active works of art</div>
 					<div class="interest-button" data-field="totalpageviews" data-value="<1">least active works of art</div>
 				</div>
@@ -119,16 +119,16 @@
 					<div class="interest-button" data-field="classification" data-value="Textile Arts">textiles</div>
 				</div>
 				<div style="padding-top:10px;padding-bottom:10px;overflow:auto;">
-					<div class="interest-button color-swatch red" data-field="hue" data-value="red"></div>
-					<div class="interest-button color-swatch orange" data-field="hue" data-value="orange"></div>
-					<div class="interest-button color-swatch yellow" data-field="hue" data-value="yellow"></div>
-					<div class="interest-button color-swatch green" data-field="hue" data-value="green"></div>
-					<div class="interest-button color-swatch blue" data-field="hue" data-value="blue"></div>
-					<div class="interest-button color-swatch violet" data-field="hue" data-value="violet"></div>
-					<div class="interest-button color-swatch brown" data-field="hue" data-value="brown"></div>
-					<div class="interest-button color-swatch white" data-field="hue" data-value="white"></div>
-					<div class="interest-button color-swatch gray" data-field="hue" data-value="gray"></div>
-					<div class="interest-button color-swatch black" data-field="hue" data-value="black"></div>
+					<div class="interest-button color-swatch red" data-field="colors.hue" data-value="Red"></div>
+					<div class="interest-button color-swatch orange" data-field="hue" data-value="Orange"></div>
+					<div class="interest-button color-swatch yellow" data-field="hue" data-value="Yellow"></div>
+					<div class="interest-button color-swatch green" data-field="hue" data-value="Green"></div>
+					<div class="interest-button color-swatch blue" data-field="hue" data-value="Blue"></div>
+					<div class="interest-button color-swatch violet" data-field="hue" data-value="Violet"></div>
+					<div class="interest-button color-swatch brown" data-field="hue" data-value="Brown"></div>
+					<div class="interest-button color-swatch white" data-field="hue" data-value="White"></div>
+					<div class="interest-button color-swatch gray" data-field="hue" data-value="Gray"></div>
+					<div class="interest-button color-swatch black" data-field="hue" data-value="Black"></div>
 				</div>
 				<div style="padding-top:10px;padding-bottom:10px;">
 					<input type="text" id="keywords" title="Enter your search term" value=""><button id="find-it">Find it</button>
@@ -151,7 +151,8 @@
 		<script src="//cdnjs.cloudflare.com/ajax/libs/handlebars.js/1.0.rc.2/handlebars.min.js"></script>
 		<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
 		<script src="js/swipe.js"></script>
-		<script src="js/d3.v3.min.js"></script>
+		<script src="js/d3/d3.v3.min.js"></script>
+        <script src="js/config.js"></script>
 		<script id="object-grid-template" type="text/template">
 			{{#records}}
 				<img src="{{imageURLMedium primaryimageurl}}">
@@ -173,16 +174,22 @@
 						<div data-object-id="{{objectid}}">
 							<div><img id="object-{{objectid}}" src="{{imageURL primaryimageurl}}"></div>
 							<div class="object-panel">						
-								<p>{{title}}</p>
-								<p>{{dated}}</p>
-								<p>{{classification}}</p>
-								<p>{{medium}}</p>
+								<p>Title: {{title}}</p>
+								{{#if dated}}
+									<p>Dated: {{dated}}</p>
+								{{/if}}
+								<p>Classification: {{classification}}</p>
+								{{#if medium}}
+									<p>Medium: {{medium}}</p>
+								{{/if}}
+								{{#if technique}}
+									<p>Technique: {{technique}}</p>
+								{{/if}}
 								<p>
 									{{#people}}
-										{{role}}: {{prefix}} <a href="#" onclick="getRandomObjects('personid',{{personid}})">{{displayname}}</a><br/>
+										{{role}}: {{prefix}} <a href="#" onclick="getRandomObjects('personid',{{personid}})">{{name}}</a><br/>
 									{{/people}}
 								</p>
-								<!-- <p>{{technique}}</p>	-->
 								{{#if details.coins}}
 									Date on coin: {{details.coins.dateoncoin}}<br/>
 									Die axis: {{details.coins.dieaxis}}<br/>
@@ -191,13 +198,15 @@
 									Obverse inscription: {{details.coins.obverseinscription}}<br/>
 									Reverse inscription: {{details.coins.reverseinscription}}<br/>
 								{{/if}}
-								{{#if creationplace}}
-								<p>Created in {{creationplace}}</p>
+								{{#if places}}
+								<p>Created in {{places.0.displayname}}</p>
 								<p>
-									<img src="{{mapURL creationplace}}">
+									<img src="{{mapURL places.0.displayname}}">
 								</p>
 								{{/if}}
-								<p>Dimensions: {{dimensions}}</p>
+								{{#if dimensions}}
+									<p>Dimensions: {{dimensions}}</p>
+								{{/if}}
 								<p>
 									{{#colors}}
 										<div class="object-color-swatch" style="background:{{color}};" title="{{color}}, {{hue}}, {{percent}}"></div>
@@ -221,7 +230,10 @@
 								{{#if provenance}}
 									<p>Provenance: {{provenance}}</p>
 								{{/if}}
-								<p>Verification level: {{verificationlevel}}</p>
+								<p>Verification level: {{verificationlevel}} - {{verificationleveldescription}}</p>
+								{{#if gallery.gallerynumber}}
+									<p>View it: Level {{gallery.floor}}, Room {{gallery.gallerynumber}}, {{gallery.name}}</p>
+								{{/if}}
 								<p>Activity</p>
 								<p class="graph"></p>
 								<p>Tags</p>
@@ -234,9 +246,9 @@
 			</div>
 		</script>	
 		<script>
-			var apiBaseURL = "http://api.harvardartmuseums.org";
-			var apiKey = "ac622520-8e83-11e3-bc70-7d9574e88e08";
-
+			var apiBaseURL = HAM.config.apiBaseURL;
+			var apiKey = HAM.config.apiKey;
+			
 			$(function() {
 				var contentHeight = $(window).height() - $("header").innerHeight() - $("footer").innerHeight();
 				$("#content").height(contentHeight);
@@ -262,7 +274,7 @@
 				});
 
 				$("#find-it").on("click", function() {
-					getRandomObjects("title", $("#keywords").val());
+					getRandomObjects("keyword", $("#keywords").val());
 				});
 
 				$("#grid-button").on("click", function() {
@@ -282,7 +294,7 @@
 					if (image) {
 						return image + imageURLParamsL;
 					} else {
-						return "http://www.harvardartmuseums.org/sites/harvardartmuseums.org/files/no_image_big.jpg";
+						return "img/no_image.png";
 					}
 				});
 
@@ -290,7 +302,7 @@
 					if (image) {
 						return image + imageURLParamsM;
 					} else {
-						return "http://www.harvardartmuseums.org/sites/harvardartmuseums.org/files/no_image.jpg";
+						return "img/no_image_thumb.png";
 					}
 				});
 
@@ -334,7 +346,12 @@
 				v = /\s/g.test(v) ? '"' + v + '"' : v;
 
 				var baseURL = apiBaseURL + '/object';
-				var urlParameters = '?apikey=' + apiKey + '&s=random&size=25&i=1&q=' + f + ':' + v;
+				var urlParameters = '?apikey=' + apiKey + '&fields=*&sort=random&size=25'; 
+				if (field == 'keyword') {
+					urlParameters += '&' + field + '=' + value;		
+				} else {
+					urlParameters += '&q=' + f + ':' + v;
+				}				
 
 				$('#object-grid').hide();
 				$('#object-suns').hide();
@@ -468,7 +485,7 @@
 			function makeActivityGraph() {
 				var objectid = $("div").find("[data-index=" + mySwipe.getPos() + "]").data("object-id");
 				var g = $("div").find("[data-object-id=" + objectid + "] .object-panel .graph");
-				var url = apiBaseURL + "/object/" + objectid + "/activity?apikey=" + apiKey;
+				var url = apiBaseURL + '/activity?apikey=' + apiKey + '&object=' + objectid + '&aggregation={"activities":{"terms":{"field":"activitytype","size":0},"aggs":{"by_month":{"date_histogram":{"field":"date","interval":"month","format":"yyy-MM","min_doc_count":0,"extended_bounds":{"min":"2009-01","max":"2014-12"}},"aggs":{"totals":{"sum":{"field":"activitycount"}}}}}}}&size=0';
 
 				if (d3.select(g[0]).select("svg").empty()) {
 					var svg = d3.select(g[0])
@@ -479,24 +496,27 @@
 							.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
 					d3.json(url, function(error, data) {
-				    	color.domain(d3.keys(data[0]).filter(function(key) {
-				    			return key !== "activitydate";}));
+						data = data.aggregations.activities;
 
-					    data.forEach(function(d) {
-					        d.activitydate = parseDate(d.activitydate);
+				    	color.domain(d3.keys(data.buckets));
+
+					    data.buckets.forEach(function(d) {
+					    	d.by_month.buckets.forEach(function(d) {
+					        	d.activitydate = parseDate(d.key_as_string);
+					    	});
 					    });
 
 					    var totals = color.domain().map(function(name) {
 					    	return {
-					    		name: name,
-					    		values: data.map(function(d) {
-					    			return {activitydate: d.activitydate, totalcount: +d[name]};
+					    		name: data.buckets[name].key,
+					    		values: data.buckets[name].by_month.buckets.map(function(d) {
+					    			return {activitydate: d.activitydate, totalcount: +d.totals.value};
 					    		})
 					    	};
 					    });
 
 					    // Scale the range of the data
-					    x.domain(d3.extent(data, function(d) { return d.activitydate; }));
+					    x.domain(d3.extent(data.buckets[0].by_month.buckets, function(d) { return d.activitydate; }));
 					    y.domain([
 					    	d3.min(totals, function(c) {return d3.min(c.values, function(v) {return v.totalcount;})}),
 							d3.max(totals, function(c) {return d3.max(c.values, function(v) {return v.totalcount;})})
@@ -519,7 +539,9 @@
 					    total.append("path")
 					    	.attr("class", "line")
 					    	.attr("d", function(d) {return line(d.values); })
-					    	.style("stroke", function(d) {return color(d.name); });
+					    	.style("stroke", function(d) {return color(d.name); })
+					    	.append("title")
+					    	.text(function(d) {return d.name;});
 					});			
 				}	
 			}
