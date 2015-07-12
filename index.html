@@ -466,6 +466,7 @@
 
 			var x = d3.time.scale().range([0, width]);
 			var y = d3.scale.linear().range([height, 0]);
+			var myScale;
 
 			var color = d3.scale.category10();
 
@@ -478,20 +479,22 @@
 			    .orient("left").ticks(3);
 
 			var line = d3.svg.line()
-			    .interpolate("basis")
+			    .interpolate("linear")
 			    .x(function(d) { return x(d.activitydate); })
 			    .y(function(d) { return y(d.totalcount); });
 
 			function makeActivityGraph() {
 				var objectid = $("div").find("[data-index=" + mySwipe.getPos() + "]").data("object-id");
 				var g = $("div").find("[data-object-id=" + objectid + "] .object-panel .graph");
-				var url = apiBaseURL + '/activity?apikey=' + apiKey + '&object=' + objectid + '&aggregation={"activities":{"terms":{"field":"activitytype","size":0},"aggs":{"by_month":{"date_histogram":{"field":"date","interval":"month","format":"yyy-MM","min_doc_count":0,"extended_bounds":{"min":"2009-01","max":"2014-12"}},"aggs":{"totals":{"sum":{"field":"activitycount"}}}}}}}&size=0';
+				var url = apiBaseURL + '/activity?apikey=' + apiKey + '&object=' + objectid + '&aggregation={"activities":{"terms":{"field":"activitytype","size":0},"aggs":{"by_month":{"date_histogram":{"field":"date","interval":"month","format":"yyy-MM","min_doc_count":0,"extended_bounds":{"min":"2009-01","max":"2015-06"}},"aggs":{"totals":{"sum":{"field":"activitycount"}}}}}}}&size=0';
 
 				if (d3.select(g[0]).select("svg").empty()) {
+					var graphWidth = width + margin.left + margin.right;
+					var graphHeight = height + margin.top + margin.bottom;
 					var svg = d3.select(g[0])
 						.append("svg")
-							.attr("width", width + margin.left + margin.right)
-							.attr("height", height + margin.top + margin.bottom)
+							.attr("width", graphWidth)
+							.attr("height", graphHeight)
 						.append("g")
 							.attr("transform", "translate(" + margin.left + "," + margin.top + ")");
 
@@ -510,10 +513,15 @@
 					    	return {
 					    		name: data.buckets[name].key,
 					    		values: data.buckets[name].by_month.buckets.map(function(d) {
-					    			return {activitydate: d.activitydate, totalcount: +d.totals.value};
+					    			return {activitydate: d.activitydate, totalcount: +d.totals.value, key_as_string: d.key_as_string};
 					    		})
 					    	};
 					    });
+
+					    myScale = d3.scale.linear()
+					    			.clamp(true)
+					    			.domain([0, x.range()[1]])
+					    			.rangeRound([0, totals[0].values.length]);
 
 					    // Scale the range of the data
 					    x.domain(d3.extent(data.buckets[0].by_month.buckets, function(d) { return d.activitydate; }));
@@ -542,6 +550,51 @@
 					    	.style("stroke", function(d) {return color(d.name); })
 					    	.append("title")
 					    	.text(function(d) {return d.name;});
+
+					    //Thanks to the author of the following article:
+					    //		http://bl.ocks.org/d3noob/a0cbcddc6bf0eb9569fe
+
+						var focus = svg.append("g") 
+        					.style("display", "none");
+
+					    // append the y line
+					    focus.append("line")
+					        .attr("class", "x")
+					        .style("stroke", "grey")
+					        .style("stroke-dasharray", "3,3")
+					        .style("opacity", 1)
+					        .style("shape-rendering", "crispEdges");			
+
+						focus.append("text")
+					        .attr("class", "y1")
+					        .style("opacity", 1)
+					        .attr("dx", 8)
+					        .attr("dy", "1em");
+
+						svg.append("rect")
+					        .attr("width", width)
+					        .attr("height", height)
+					        .style("fill", "none")
+					        .style("pointer-events", "all")
+        					.on("mouseover", function() { focus.style("display", null); })
+					        .on("mouseout", function() { focus.style("display", "none"); })
+					        .on("mousemove", function() {
+					        	focus.select(".x")
+						            .attr("transform",
+						                  "translate(" + d3.mouse(this)[0] + "," + (0) + ")")
+						            .attr("y2", graphHeight-25 );
+
+								var itemNumber = myScale(d3.mouse(this)[0]);
+								var t = totals[0].values[itemNumber].key_as_string;
+								totals.forEach(function(d) {
+									t += d.name + ":" + d.values[itemNumber].totalcount;
+								});
+
+								focus.select("text.y1")
+						            .attr("transform",
+						                  "translate(" + d3.mouse(this)[0] + ",0)")
+						            .text(t);								
+					        });					        			    	
 					});			
 				}	
 			}
