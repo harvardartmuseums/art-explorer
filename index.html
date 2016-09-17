@@ -30,8 +30,9 @@
 			.metric-label {width: 105px; display: inline-block;}
 
 			/*Tags*/
-			.tag {padding-right: 5px;padding-bottom: 5px;float: left;}
+			.tag {padding-right: 5px;padding-bottom: 5px;display: inline-block;}
 			.no-tags {font-style: italic;}
+			.tag-group {padding-bottom: 10px;}
 
 			footer {background: #999999; padding: 10px;color: #333333;bottom:0;height:16px;z-index: 50000;}
 			footer .info-panel {}
@@ -106,6 +107,7 @@
 					<div class="interest-button" data-field="gallery.gallerynumber" data-value="1220">Wertheim Collection</div>
 					<div class="interest-button" data-field="groupings.name" data-value="Gordon Ward Gahan Collection">Gordon Gahan Collection</div>
 					<div class="interest-button" data-field="groupings.name" data-value="The Social Museum Collection">Social Museum Collection</div>
+					<div class="interest-button" data-field="titles.title" data-value="american professional photographers collection">American Professional Photographers Collection</div>
 				</div>
 				<div style="padding-top:10px;padding-bottom:10px;">
 					<div class="interest-button" data-field="classification" data-value="Coins">coins</div>
@@ -136,9 +138,9 @@
 				<span id="museums-button">Harvard Art Museums</span>&nbsp;|
 				<span id="sets-button">Interests</span>&nbsp;|
 				<span id="help-button">Help</span>					
-				<span id="grid-button" class="toggle-button off"><img src="img/grid.png"></span>
-				<span id="sun-button" class="toggle-button off"><img src="img/sun.png"></span>
-				<span id="info-button" class="toggle-button on"><img src="img/info.png"></span>
+				<span id="grid-button" class="toggle-button off" title="Grid View"><img src="img/grid.png"></span>
+				<span id="sun-button" class="toggle-button off" title="Color View"><img src="img/sun.png"></span>
+				<span id="info-button" class="toggle-button on" title="Show/Hide Details Panel"><img src="img/info.png"></span>
 				<span id="counter"></span>		
 				<span id="set-info">We found <span id="totalrecords"></span> items. You are viewing item&nbsp;</span>		
 			</div>
@@ -165,6 +167,44 @@
 				<span class="no-tags">No tags yet</span>
 			{{/if}}
 		</script>
+		<script id="object-experimental-template" type="text/temptale">
+			{{#if error}}
+				<span class="no-tags">No experimental data yet</span>
+			{{else}}
+				{{#if googlevision.responses.[0]}}
+					<div>Google Vision</div>
+					<div class="tag-group">
+						{{#googlevision.responses.[0].labelAnnotations}}
+							<span class="tag"><a href="#">{{description}}</a></span>
+						{{/googlevision.responses.[0].labelAnnotations}}
+					</div>
+				{{/if}}
+				{{#if clarifai.results.[0]}}
+					<div>Clarifai</div>
+					<div class="tag-group">
+						{{#clarifai.results.[0].result.tag.classes}}
+							<span class="tag"><a href="#">{{this}}</a></span>
+						{{/clarifai.results.[0].result.tag.classes}}
+					</div>
+				{{/if}}		
+				{{#if imagga.tags.results.[0]}}
+					<div>Imagga Tags</div>
+					<div class="tag-group">
+						{{#imagga.tags.results.[0].tags}}
+							<span class="tag"><a href="#">{{tag}}</a></span>
+						{{/imagga.tags.results.[0].tags}}
+					</div>
+				{{/if}}			
+				{{#if imagga.categories.results.[0]}}
+					<div>Imagga Categories</div>
+					<div class="tag-group">
+						{{#imagga.categories.results.[0].categories}}
+							<span class="tag"><a href="#">{{name}} ({{confidence}}%)</a></span>
+						{{/imagga.categories.results.[0].categories}}
+					</div>
+				{{/if}}			
+			{{/if}}
+		</script>		
 		<script id="random-set-template" type="text/template">
 			<div id="slider" class="swipe">
 				<div class="swipe-wrap">
@@ -232,11 +272,25 @@
 								{{#if gallery.gallerynumber}}
 									<p>View it: Level {{gallery.floor}}, Room {{gallery.gallerynumber}}, {{gallery.name}}</p>
 								{{/if}}
+								<hr/>
 								<p>Activity</p>
 								<p class="graph"></p>
+								<div class="graph-day-data">
+									<div><div class="metric-label">Period of activity:</div><span class="metric-period"></span></div>
+									<div><div class="metric-label">Total page views:</div><span class="metric-pageviews">0</span></div>
+									<div><div class="metric-label">Unique page views:</div><span class="metric-uniquepageviews">0</span></div>
+									<div><div class="metric-label">Physical moves:</div><span class="metric-moves">0</span></div>
+									<div><div class="metric-label">Record edits:</div><span class="metric-edits">0</span></div>
+									<div><div class="metric-label">Study center views:</div><span class="metric-studycenterviews">0</span></div>
+									<div><div class="metric-label">Conservation:</div><span class="metric-conservation">0</span></div>
+								</div>
+								<hr/>
 								<p>Tags</p>
 								<!--<p><input type="text" class="tag-input"><button class="tag-button" onclick="addTag({{objectid}})">add a tag</button></p>-->
 								<p class="tags"></p>
+								<hr/>
+								<p>Experimental Data</p>
+								<p class="experimental"></p>
 							</div>
 						</div>
 					{{/records}}
@@ -427,11 +481,25 @@
 
 				makeActivityGraph();
 				makeTagsGrid();
+				makeExperimentalBlock();
 			}
 
 			function swapImage(id, url) {
 				$("#object-"+id).attr('src', url);
 			}
+
+			function makeExperimentalBlock() {
+				var objectid = $("div").find("[data-index=" + mySwipe.getPos() + "]").data("object-id");
+				var url = apiBaseURL + "/object/" + objectid + "/experimental?apikey=" + apiKey;
+
+				$.getJSON(url, function(data) {
+					var expSource = $('#object-experimental-template').html();
+					var expTemplate = Handlebars.compile(expSource);
+					var expInfo = expTemplate(data);
+					var exp = $("div").find("[data-object-id=" + objectid + "] .object-panel .experimental");
+					$(exp).html(expInfo);					
+				});
+			};
 
 			function makeTagsGrid() {
 				var objectid = $("div").find("[data-index=" + mySwipe.getPos() + "]").data("object-id");
@@ -484,7 +552,8 @@
 			function makeActivityGraph() {
 				var objectid = $("div").find("[data-index=" + mySwipe.getPos() + "]").data("object-id");
 				var g = $("div").find("[data-object-id=" + objectid + "] .object-panel .graph");
-				var url = apiBaseURL + '/activity?apikey=' + apiKey + '&object=' + objectid + '&aggregation={"activities":{"terms":{"field":"activitytype","size":0},"aggs":{"by_month":{"date_histogram":{"field":"date","interval":"month","format":"yyy-MM","min_doc_count":0,"extended_bounds":{"min":"2009-01","max":"2015-06"}},"aggs":{"totals":{"sum":{"field":"activitycount"}}}}}}}&size=0';
+				var graphData = $("div").find("[data-object-id=" + objectid + "] .object-panel .graph-day-data");
+				var url = apiBaseURL + '/activity?apikey=' + apiKey + '&object=' + objectid + '&aggregation={"activities":{"terms":{"field":"activitytype","size":0},"aggs":{"by_month":{"date_histogram":{"field":"date","interval":"month","format":"yyy-MM","min_doc_count":0,"extended_bounds":{"min":"2009-01","max":"2016-05"}},"aggs":{"totals":{"sum":{"field":"activitycount"}}}}}}}&size=0';
 
 				if (d3.select(g[0]).select("svg").empty()) {
 					var graphWidth = width + margin.left + margin.right;
@@ -552,6 +621,8 @@
 					    //Thanks to the author of the following article:
 					    //		http://bl.ocks.org/d3noob/a0cbcddc6bf0eb9569fe
 
+					    var dataGrid = d3.select(graphData[0]);
+
 						var focus = svg.append("g") 
         					.style("display", "none");
 
@@ -584,14 +655,18 @@
 
 								var itemNumber = myScale(d3.mouse(this)[0]);
 								var t = totals[0].values[itemNumber].key_as_string;
+								dataGrid.select("span.metric-period")
+									.text(t);
+								
 								totals.forEach(function(d) {
-									t += d.name + ":" + d.values[itemNumber].totalcount;
+									dataGrid.select("span.metric-" + d.name)
+										.text(d.values[itemNumber].totalcount);
 								});
 
-								focus.select("text.y1")
-						            .attr("transform",
-						                  "translate(" + d3.mouse(this)[0] + ",0)")
-						            .text(t);								
+								// focus.select("text.y1")
+						  //           .attr("transform",
+						  //                 "translate(" + d3.mouse(this)[0] + ",0)")
+						  //           .text(t);								
 					        });					        			    	
 					});			
 				}	
@@ -600,6 +675,7 @@
 			function makeSun(record) {        
 				var width = 150,
 					height = 150;
+				var maxRadius = width/3;
 
 				var svg = d3.select("#object-suns").append("svg")
 		            	.attr("width", width)
@@ -608,6 +684,11 @@
 		            	.attr("transform", "translate(0,0)");
 
 		        if (record.colors) {
+					var linearScale = d3.scale.linear()
+										// .domain([0, d3.max(record.colors, function(d) {return d.percent;})])
+										.domain([0, 1])
+										.range([0, 73]);
+	
 					var dot = svg.append("g")
 	                       .attr("class", "dots")
 	                    .selectAll(".dot")
@@ -617,17 +698,17 @@
 	                        .style("fill", function(d) { return d.color; })
 	                        .attr("cx", width/2)
 	                        .attr("cy", height/2)
-	                        .attr("r", function(d) { return d.percent*100; });
+	                        .attr("r", function(d) { return linearScale(d.percent); });
 
                 } else {
 					var dot = svg.append("g")
 	                       .attr("class", "dots")
 	                    	.append("circle")
 	                        .attr("class", "dot")
-	                        .style("fill", "#888888")
+	                        .style("fill", "#cccccc")
 	                        .attr("cx", width/2)
 	                        .attr("cy", height/2)
-	                        .attr("r", 50);
+	                        .attr("r", maxRadius);
 	            } 
 			}			
 		</script>
