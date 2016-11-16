@@ -33,6 +33,7 @@
 			.tag {padding-right: 5px;padding-bottom: 5px;display: inline-block;}
 			.no-tags {font-style: italic;}
 			.tag-group {padding-bottom: 10px;}
+			.faces-data img {height: 50px;margin-bottom: 4px;}
 
 			footer {background: #999999; padding: 10px;color: #333333;bottom:0;height:16px;z-index: 50000;}
 			footer .info-panel {}
@@ -173,6 +174,13 @@
 			{{else}}
 				{{#if googlevision.responses.[0]}}
 					<div>Google Vision</div>
+					<div class="tag-group faces-data">
+						{{#googlevision.responses.[0].faceAnnotations}}
+							{{#if iiifFaceImageURL}}
+								<img src={{iiifFaceImageURL}}>
+							{{/if}}							
+						{{/googlevision.responses.[0].faceAnnotations}}
+					</div>
 					<div class="tag-group">
 						{{#googlevision.responses.[0].labelAnnotations}}
 							<span class="tag"><a href="#">{{description}}</a></span>
