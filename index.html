@@ -99,15 +99,15 @@
 			<div id="sets-message">
 				<h2>What do you want to see?</h2>
 				<div style="padding-top:10px;padding-bottom:10px;">
-					<div class="interest-button" data-field="classification" data-value="*">everything</div>
-					<div class="interest-button" data-field="groupings.name" data-value="Collection Highlights">highlights</div>
+					<div class="interest-button" data-field="classification" data-value="any">everything</div>
+					<div class="interest-button" data-field="group" data-value="2039923">highlights</div>
 					<div class="interest-button" data-field="totalpageviews" data-value=">250">most active works of art</div>
 					<div class="interest-button" data-field="totalpageviews" data-value="<1">least active works of art</div>
 				</div>
 				<div style="padding-top:10px;padding-bottom:10px;">
-					<div class="interest-button" data-field="gallery.gallerynumber" data-value="1220">Wertheim Collection</div>
-					<div class="interest-button" data-field="groupings.name" data-value="Gordon Ward Gahan Collection">Gordon Gahan Collection</div>
-					<div class="interest-button" data-field="groupings.name" data-value="The Social Museum Collection">Social Museum Collection</div>
+					<div class="interest-button" data-field="gallery" data-value="1220">Wertheim Collection</div>
+					<div class="interest-button" data-field="group" data-value="2039949">Gordon Gahan Collection</div>
+					<div class="interest-button" data-field="group" data-value="2039926">Social Museum Collection</div>
 					<div class="interest-button" data-field="titles.title" data-value="american professional photographers collection">American Professional Photographers Collection</div>
 				</div>
 				<div style="padding-top:10px;padding-bottom:10px;">
@@ -121,15 +121,15 @@
 				</div>
 				<div style="padding-top:10px;padding-bottom:10px;overflow:auto;">
 					<div class="interest-button color-swatch red" data-field="colors.hue" data-value="Red"></div>
-					<div class="interest-button color-swatch orange" data-field="hue" data-value="Orange"></div>
-					<div class="interest-button color-swatch yellow" data-field="hue" data-value="Yellow"></div>
-					<div class="interest-button color-swatch green" data-field="hue" data-value="Green"></div>
-					<div class="interest-button color-swatch blue" data-field="hue" data-value="Blue"></div>
-					<div class="interest-button color-swatch violet" data-field="hue" data-value="Violet"></div>
-					<div class="interest-button color-swatch brown" data-field="hue" data-value="Brown"></div>
-					<div class="interest-button color-swatch white" data-field="hue" data-value="White"></div>
-					<div class="interest-button color-swatch gray" data-field="hue" data-value="Gray"></div>
-					<div class="interest-button color-swatch black" data-field="hue" data-value="Black"></div>
+					<div class="interest-button color-swatch orange" data-field="colors.hue" data-value="Orange"></div>
+					<div class="interest-button color-swatch yellow" data-field="colors.hue" data-value="Yellow"></div>
+					<div class="interest-button color-swatch green" data-field="colors.hue" data-value="Green"></div>
+					<div class="interest-button color-swatch blue" data-field="colors.hue" data-value="Blue"></div>
+					<div class="interest-button color-swatch violet" data-field="colors.hue" data-value="Violet"></div>
+					<div class="interest-button color-swatch brown" data-field="colors.hue" data-value="Brown"></div>
+					<div class="interest-button color-swatch white" data-field="colors.hue" data-value="White"></div>
+					<div class="interest-button color-swatch gray" data-field="colors.hue" data-value="Gray"></div>
+					<div class="interest-button color-swatch black" data-field="colors.hue" data-value="Black"></div>
 				</div>
 				<div style="padding-top:10px;padding-bottom:10px;">
 					<input type="text" id="keywords" title="Enter your search term" value=""><button id="find-it">Find it</button>
@@ -233,7 +233,7 @@
 								{{/if}}
 								<p>
 									{{#people}}
-										{{role}}: {{prefix}} <a href="#" onclick="getRandomObjects('personid',{{personid}})">{{name}}</a><br/>
+										{{role}}: {{prefix}} <a href="#" onclick="getRandomObjects('person',{{personid}})">{{name}}</a><br/>
 									{{/people}}
 								</p>
 								{{#if details.coins}}
@@ -407,7 +407,7 @@
 
 				var baseURL = apiBaseURL + '/object';
 				var urlParameters = '?apikey=' + apiKey + '&fields=*&sort=random&size=25'; 
-				if (field == 'keyword') {
+				if (['keyword', 'person', 'classification', 'gallery', 'group', 'title'].includes(field)) {
 					urlParameters += '&' + field + '=' + value;		
 				} else {
 					urlParameters += '&q=' + f + ':' + v;
