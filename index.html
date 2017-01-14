@@ -98,7 +98,7 @@
 			</div>
 			<div id="sets-message">
 				<h2>What do you want to see?</h2>
-				<div style="padding-top:10px;padding-bottom:10px;">
+				<div style="padding-bottom:10px;">
 					<div class="interest-button" data-field="classification" data-value="any">everything</div>
 					<div class="interest-button" data-field="group" data-value="2039923">highlights</div>
 					<div class="interest-button" data-field="totalpageviews" data-value=">250">most active works of art</div>
@@ -226,12 +226,12 @@
 								{{#if dated}}
 									<p>Dated: {{dated}}</p>
 								{{/if}}
-								<p>Classification: {{classification}}</p>
+								<p>Classification: <a href="#" onclick="getRandomObjects('classification',{{classificationid}})">{{classification}}</a></p>
 								{{#if medium}}
 									<p>Medium: {{medium}}</p>
 								{{/if}}
 								{{#if technique}}
-									<p>Technique: {{technique}}</p>
+									<p>Technique: <a href="#" onclick="getRandomObjects('technique',{{techniqueid}})">{{technique}}</a></p>
 								{{/if}}
 								<p>
 									{{#people}}
@@ -409,7 +409,7 @@
 
 				var baseURL = apiBaseURL + '/object';
 				var urlParameters = '?apikey=' + apiKey + '&fields=*&sort=random&size=25'; 
-				if (['keyword', 'person', 'classification', 'gallery', 'group', 'title'].includes(field)) {
+				if (['keyword', 'person', 'classification', 'gallery', 'group', 'title', 'technique'].includes(field)) {
 					urlParameters += '&' + field + '=' + value;		
 				} else {
 					urlParameters += '&q=' + f + ':' + v;
