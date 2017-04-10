@@ -5,66 +5,219 @@
 		<title>Art Explorer | Harvard Art Museums</title>
 		<link rel="stylesheet" href="http://fonts.typotheque.com/WF-023797-007265.css" type="text/css" />
 		<style type="text/css">
-			body {background: #ffffff;color: #000000;font-family: "Neutral Regular 3", "NeutralBP", "Neutral BP", Helvetica, Arial, sans-serif;font-size: 0.8em;margin: 0px;padding: 0px;}
+			body {
+				background: #ffffff;
+				color: #000000;
+				font-family: "Neutral Regular 3", "NeutralBP", "Neutral BP", Helvetica, Arial, sans-serif;
+				font-size: 0.8em;
+				margin: 0px;
+				padding: 0px;
+			}
 			
-            logo {position: absolute; top:45px; left:45px;}
+            	logo {
+				position: absolute; 
+				top: 45px; 
+				left:45px;
+			}
 
-			#content {overflow: hidden;}
-			#random-set {margin: 0px 0px 0px 0px;padding: 0px;width: 100%;}
-			#loader {text-align: center;width: 100%;display: none;z-index: 100000;background: white;}
-			#loader .message {font-size: 1.4em;}
+			#content {
+				overflow: hidden;
+			}
+			#random-set {
+				margin: 0px 0px 0px 0px;
+				padding: 0px;
+				width: 100%;
+			}
+			#loader {
+				text-align: center;
+				width: 100%;
+				display: none;
+				z-index: 100000;
+				background: white;
+			}
+			#loader .message {
+				font-size: 1.4em;
+			}
 
-			#object-grid, #object-suns {position:fixed;z-index:9999;height: 100%;background: #ffffff;opacity: 0.95;bottom: 36px;width: 100%;overflow-y: scroll;}
-			#object-grid img {float: left;margin: 2px;padding: 5px;cursor: pointer;height:150px;}
-			#object-grid img.highlight {background: #ff0000;}
+			#object-grid, #object-suns {
+				position: fixed;
+				z-index: 9999;
+				height: 100%;
+				background: #ffffff;
+				opacity: 0.95;
+				bottom: 36px;
+				width: 100%;
+				overflow-y: scroll;
+			}
+			#object-grid img {
+				float: left;
+				margin: 2px;
+				padding: 5px;
+				cursor: pointer;
+				height: 150px;
+			}
+			#object-grid img.highlight {
+				background: #ff0000;
+			}
 
-			.object-panel {float:right;width:275px;text-align:left;top:0px;position:fixed;right:0px;height: 100%;background: #ffffff;opacity: 0.95;padding-left: 10px;padding-right: 10px;overflow-y:scroll;}
-			.object-panel .object-color-swatch {float:left;width:10px;height:10px;}		
-			.object-panel .object-image {float:left; padding:2px;height:50px;}
+			.object-panel {
+				float: right;
+				width: 275px;
+				text-align: left;
+				top: 0px;
+				position: fixed;
+				right: 0px;
+				height: 100%;
+				background: #ffffff;
+				opacity: 0.95;
+				padding-left: 10px;
+				padding-right: 10px;
+				overflow-y:scroll;
+			}
+			.object-panel .object-color-swatch {
+				float: left;
+				width: 10px;
+				height: 10px;
+			}		
+			.object-panel .object-image {
+				float: left; 
+				padding: 2px;
+				height: 50px;
+			}
 
 			/*Activity graph*/
-			.graph {font-size: 0.8em;font-family: verdana;}
-			path {stroke-width: 1;fill: none;}
-			.axis path, .axis line {fill: none;stroke: grey;stroke-width: 1;shape-rendering: crispEdges;}			
-			.graph-day-data {margin-left: 0px;font-size: 0.8em;}
-			.metric-label {width: 105px; display: inline-block;}
+			.graph {
+				font-size: 0.8em;
+				font-family: verdana;
+			}
+			path {
+				stroke-width: 1;
+				fill: none;
+			}
+			.axis path, .axis line {
+				fill: none;
+				stroke: grey;
+				stroke-width: 1;
+				shape-rendering: crispEdges;
+			}			
+			.graph-day-data {
+				margin-left: 0px;
+				font-size: 0.8em;
+			}
+			.metric-label {
+				width: 105px; 
+				display: inline-block;
+			}
 
 			/*Tags*/
-			.tag {padding-right: 5px;padding-bottom: 5px;display: inline-block;}
-			.no-tags {font-style: italic;}
-			.tag-group {padding-bottom: 10px;}
-			.faces-data img {height: 50px;margin-bottom: 4px;}
+			.tag {
+				padding-right: 5px;
+				padding-bottom: 5px;
+				display: inline-block;
+			}
+			.no-tags {
+				font-style: italic;
+			}
+			.tag-group {
+				padding-bottom: 10px;
+			}
+			.faces-data img {
+				height: 50px;
+				margin-bottom: 4px;
+			}
 
-			footer {background: #999999; padding: 10px;color: #333333;bottom:0;height:16px;z-index: 50000;}
+			footer {
+				background: #999999; 
+				padding: 10px;
+				color: #333333;
+				bottom: 0;
+				height: 16px;
+				z-index: 50000;
+			}
 			footer .info-panel {}
-			footer #help-button, #sets-button {cursor: pointer;}
-			footer .interest-button {cursor: pointer;}
-			footer .interest-button:hover {background: white;}
-			footer .color-swatch {float:left;width:25px;height:25px;margin-right: 5px;}	
-			footer #help-message, #sets-message {display: none;width:25%;bottom:36px;left:0px;position: absolute;padding:20px;background: #c0c0c0;z-index:100000;}
-			footer .toggle-button {cursor: pointer;float:right;vertical-align:middle;margin-left:10px;}
-			footer .on {opacity:1.0;}
-			footer .off {opacity:0.6;}
-			footer #counter {float: right;}
-			footer #set-info {float: right;}
+			footer #help-button, #sets-button {
+				cursor: pointer;
+			}
+			footer .interest-button {
+				cursor: pointer;
+			}
+			footer .interest-button:hover {
+				background: white;
+			}
+			footer .color-swatch {
+				float: left;
+				width: 25px;
+				height: 25px;
+				margin-right: 5px;
+			}	
+			footer #help-message, #sets-message {
+				display: none;
+				width: 25%;
+				bottom: 36px;
+				left: 0px;
+				position: absolute;
+				padding: 20px;
+				background: #c0c0c0;
+				z-index: 100000;
+			}
+			footer .toggle-button {
+				cursor: pointer;
+				float: right;
+				vertical-align: middle;
+				margin-left: 10px;
+			}
+			footer .on {
+				opacity: 1.0;
+			}
+			footer .off {
+				opacity: 0.6;
+			}
+			footer #counter {
+				float: right;
+			}
+			footer #set-info {
+				float: right;
+			}
 
-			footer input {border:0px;margin:0px;height:25px;padding-left:5px;}
-			footer button {border:0px;height:27px;}
+			footer input {
+				border: 0px;
+				margin: 0px;
+				height: 25px;
+				padding-left: 5px;
+			}
+			footer button {
+				border: 0px;
+				height: 27px;
+			}
 
-			.red {background:red;}
-			.orange {background:orange;}
-			.yellow {background:yellow;}
-			.green {background:green;}
-			.blue {background:blue;}
-			.violet {background:violet;}
-			.brown {background:brown;}
-			.white {background:white;}
-			.gray {background:gray;}
-			.black {background:black;}
+			.red 		{background: red;}
+			.orange 	{background: orange;}
+			.yellow 	{background: yellow;}
+			.green 	{background: green;}
+			.blue 	{background: blue;}
+			.violet 	{background: violet;}
+			.brown 	{background: brown;}
+			.white 	{background: white;}
+			.gray 	{background: gray;}
+			.black 	{background: black;}
 
-			.swipe {overflow: hidden;visibility: hidden;position: relative;height: inherit;}
-			.swipe-wrap {text-align: center;overflow: hidden;position: relative;height: inherit;}
-			.swipe-wrap > div {float:left;position: relative;height: inherit;}
+			.swipe {
+				overflow: hidden;
+				visibility: hidden;
+				position: relative;
+				height: inherit;
+			}
+			.swipe-wrap {
+				text-align: center;
+				overflow: hidden;
+				position: relative;
+				height: inherit;
+			}
+			.swipe-wrap > div {
+				float: left;
+				position: relative;
+				height: inherit;
+			}
 		</style>
 		<script type="text/javascript">
 		  var _gaq = _gaq || [];
@@ -156,12 +309,16 @@
 		<script src="http://cdnjs.cloudflare.com/ajax/libs/jquery/1.8.2/jquery.min.js"></script>
 		<script src="js/swipe.js"></script>
 		<script src="js/d3/d3.v3.min.js"></script>
+
         <script src="js/config.js"></script>
+		// Grid view of objects; display with third button in bottom right corner
 		<script id="object-grid-template" type="text/template">
 			{{#records}}
 				<img src="{{imageURLMedium primaryimageurl}}">
 			{{/records}}
 		</script>
+
+		// Tag list; part of right panel in the initial view
 		<script id="object-tags-template" type="text/temptale">
 			{{#if .}}
 				{{#.}}
@@ -171,6 +328,8 @@
 				<span class="no-tags">No tags yet</span>
 			{{/if}}
 		</script>
+
+		// Experimental data; part of right panel in the initial view
 		<script id="object-experimental-template" type="text/temptale">
 			{{#if error}}
 				<span class="no-tags">No experimental data yet</span>
@@ -216,6 +375,8 @@
 				{{/if}}			
 			{{/if}}
 		</script>		
+
+		// The main view, with image display and information panel
 		<script id="random-set-template" type="text/template">
 			<div id="slider" class="swipe">
 				<div class="swipe-wrap">
@@ -308,10 +469,12 @@
 				</div>
 			</div>
 		</script>	
+
 		<script>
 			var apiBaseURL = HAM.config.apiBaseURL;
 			var apiKey = HAM.config.apiKey;
 			
+			// Sets up sizes, event handlers, and Handlebars block functions for page
 			$(function() {
 				var contentHeight = $(window).height() - $("header").innerHeight() - $("footer").innerHeight();
 				$("#content").height(contentHeight);
@@ -402,6 +565,9 @@
 				});
 			});
 
+			// Gets a set of twenty-five random objects, based on 
+			// the given field/value search, and updates the 
+			// explorer accordingly
 			function getRandomObjects(field, value) {
 				var v = value || '*';
 				var f = field || '*';
@@ -422,11 +588,15 @@
 				$('#loader').show();
 
 				$.getJSON(baseURL + urlParameters, function(data) {
+					// Makes a grid of all twenty-five objects 
+					// (third button in bottom right corner)
 					var gridSource = $('#object-grid-template').html();
 					var gridTemplate = Handlebars.compile(gridSource);
 					var gridInfo = gridTemplate(data);
 					$('#object-grid').html(gridInfo);
 
+					// Makes a set of twenty-five display pages, 
+					// each with an image and an information panel
 					var source = $('#random-set-template').html();
 					var template = Handlebars.compile(source);
 					var info = template(data);
@@ -533,6 +703,8 @@
 				$(tags).append('<span class="tag">' + $(tag).val() + '</span>');
 				$(tag).val("").focus();
 			}
+
+			//------ACTIVITY GRAPH------//
 
 			//See http://bl.ocks.org/mbostock/3884955
 			var margin = {top: 5, right: 5, bottom: 20, left: 30},
