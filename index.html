@@ -334,43 +334,43 @@
 			{{#if error}}
 				<span class="no-tags">No experimental data yet</span>
 			{{else}}
-				{{#if googlevision.responses.[0]}}
+				{{#if images.[0].googlevision.responses.[0]}}
 					<div>Google Vision</div>
 					<div class="tag-group faces-data">
-						{{#googlevision.responses.[0].faceAnnotations}}
+						{{#images.[0].googlevision.responses.[0].faceAnnotations}}
 							{{#if iiifFaceImageURL}}
 								<img src={{iiifFaceImageURL}}>
 							{{/if}}							
-						{{/googlevision.responses.[0].faceAnnotations}}
+						{{/images.[0].googlevision.responses.[0].faceAnnotations}}
 					</div>
 					<div class="tag-group">
-						{{#googlevision.responses.[0].labelAnnotations}}
+						{{#images.[0].googlevision.responses.[0].labelAnnotations}}
 							<span class="tag"><a href="#">{{description}}</a></span>
-						{{/googlevision.responses.[0].labelAnnotations}}
+						{{/images.[0].googlevision.responses.[0].labelAnnotations}}
 					</div>
 				{{/if}}
-				{{#if clarifai.results.[0]}}
+				{{#if images.[0].clarifai.results.[0]}}
 					<div>Clarifai</div>
 					<div class="tag-group">
-						{{#clarifai.results.[0].result.tag.classes}}
+						{{#images.[0].clarifai.results.[0].result.tag.classes}}
 							<span class="tag"><a href="#">{{this}}</a></span>
-						{{/clarifai.results.[0].result.tag.classes}}
+						{{/images.[0].clarifai.results.[0].result.tag.classes}}
 					</div>
 				{{/if}}		
-				{{#if imagga.tags.results.[0]}}
+				{{#if images.[0].imagga.tags.results.[0]}}
 					<div>Imagga Tags</div>
 					<div class="tag-group">
-						{{#imagga.tags.results.[0].tags}}
+						{{#images.[0].imagga.tags.results.[0].tags}}
 							<span class="tag"><a href="#">{{tag}}</a></span>
-						{{/imagga.tags.results.[0].tags}}
+						{{/images.[0].imagga.tags.results.[0].tags}}
 					</div>
 				{{/if}}			
-				{{#if imagga.categories.results.[0]}}
+				{{#if images.[0].imagga.categories.results.[0]}}
 					<div>Imagga Categories</div>
 					<div class="tag-group">
-						{{#imagga.categories.results.[0].categories}}
+						{{#images.[0].imagga.categories.results.[0].categories}}
 							<span class="tag"><a href="#">{{name}} ({{confidence}}%)</a></span>
-						{{/imagga.categories.results.[0].categories}}
+						{{/images.[0].imagga.categories.results.[0].categories}}
 					</div>
 				{{/if}}			
 			{{/if}}
