@@ -311,14 +311,14 @@
 		<script src="js/d3/d3.v3.min.js"></script>
 
         <script src="js/config.js"></script>
-		// Grid view of objects; display with third button in bottom right corner
+		<!-- // Grid view of objects; display with third button in bottom right corner -->
 		<script id="object-grid-template" type="text/template">
 			{{#records}}
 				<img src="{{imageURLMedium primaryimageurl}}">
 			{{/records}}
 		</script>
 
-		// Tag list; part of right panel in the initial view
+		<!-- // Tag list; part of right panel in the initial view -->
 		<script id="object-tags-template" type="text/temptale">
 			{{#if .}}
 				{{#.}}
@@ -329,7 +329,7 @@
 			{{/if}}
 		</script>
 
-		// Experimental data; part of right panel in the initial view
+		<!-- // Experimental data; part of right panel in the initial view -->
 		<script id="object-experimental-template" type="text/temptale">
 			{{#if error}}
 				<span class="no-tags">No experimental data yet</span>
@@ -376,7 +376,7 @@
 			{{/if}}
 		</script>		
 
-		// The main view, with image display and information panel
+		<!-- // The main view, with image display and information panel -->
 		<script id="random-set-template" type="text/template">
 			<div id="slider" class="swipe">
 				<div class="swipe-wrap">
