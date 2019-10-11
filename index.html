@@ -419,7 +419,7 @@
 								{{/if}}
 								<p>
 									{{#colors}}
-										<div class="object-color-swatch" style="background:{{color}};" title="{{color}}, {{hue}}, {{percent}}"></div>
+										<div class="object-color-swatch" style="background:{{color}};width:{{colorPercentToWidth percent}}px" title="{{color}}, {{hue}}, {{percent}}"></div>
 									{{/colors}}
 									<div style="clear:both"></div>
 								</p>
@@ -430,6 +430,9 @@
 									<div style="clear:both"></div>
 								</p>
 								<p>Creditline: {{creditline}}</p>
+								{{#if accessionyear}}
+									<p>Accession year: {{accessionyear}}</p>
+								{{/if}}
 								<p>Object number: {{objectnumber}} <a target="_window" title="View this on the museums' main website" href="{{url}}"><img src="img/popouticon.png"></a></p>
 								{{#if description}}
 									<p>Description: {{description}}</p>
@@ -536,7 +539,16 @@
 					return 'https://maps.googleapis.com/maps/api/staticmap?center=' + place + '&zoom=2&size=250x100&markers=color:blue|' + place + '&maptype=roadmap&sensor=false&key=AIzaSyBuHcdtE2MWzi3sLBegobS98d1htb-Q-gs';
 				});
 
-				getRandomObjects();
+				Handlebars.registerHelper('colorPercentToWidth', function(amount) {
+					return Math.ceil(amount * 100);
+				});
+
+				var objectID = getrUrlVar("object");
+				if (objectID) {
+					getRandomObjects("id", objectID);
+				} else {
+					getRandomObjects();
+				}
 
 				$(window).on('keydown', function (e) {
     				switch (e.keyCode) {
@@ -893,7 +905,12 @@
 	                        .attr("cy", height/2)
 	                        .attr("r", maxRadius);
 	            } 
-			}			
+			}	
+
+			function getrUrlVar(key) {
+				var result = new RegExp(key + "=([^&]*)", "i").exec(window.location.search);
+				return result && unescape(result[1]) || "";
+			}					
 		</script>
 	</body>
 </html>
