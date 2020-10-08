@@ -748,7 +748,7 @@
 				var objectid = $("div").find("[data-index=" + mySwipe.getPos() + "]").data("object-id");
 				var g = $("div").find("[data-object-id=" + objectid + "] .object-panel .graph");
 				var graphData = $("div").find("[data-object-id=" + objectid + "] .object-panel .graph-day-data");
-				var url = apiBaseURL + '/activity?apikey=' + apiKey + '&object=' + objectid + '&aggregation={"activities":{"terms":{"field":"activitytype","size":0},"aggs":{"by_month":{"date_histogram":{"field":"date","interval":"month","format":"yyy-MM","min_doc_count":0,"extended_bounds":{"min":"2009-01","max":"2016-12"}},"aggs":{"totals":{"sum":{"field":"activitycount"}}}}}}}&size=0';
+				var url = apiBaseURL + '/activity?apikey=' + apiKey + '&object=' + objectid + '&aggregation={"activities":{"terms":{"field":"activitytype","size":10},"aggs":{"by_month":{"date_histogram":{"field":"date","interval":"month","format":"yyy-MM","min_doc_count":0,"extended_bounds":{"min":"2009-01","max":"2016-12"}},"aggs":{"totals":{"sum":{"field":"activitycount"}}}}}}}&size=0';
 
 				if (d3.select(g[0]).select("svg").empty()) {
 					var graphWidth = width + margin.left + margin.right;
